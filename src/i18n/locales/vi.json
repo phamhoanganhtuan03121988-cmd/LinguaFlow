@@ -1,0 +1,302 @@
+{
+  "common": {
+    "appName": "LinguaFlow",
+    "continue": "Tiếp tục",
+    "getStarted": "Bắt đầu",
+    "back": "Quay lại"
+  },
+  "designPreview": {
+    "eyebrow": "Hệ thống thiết kế",
+    "greeting": "Chào mừng đến với LinguaFlow",
+    "tagline": "Học ngoại ngữ mỗi ngày, theo cách của bạn",
+    "colorsTitle": "Bảng màu",
+    "typographyTitle": "Kiểu chữ",
+    "sampleCardTitle": "Bài học tiếp theo",
+    "sampleCardBody": "Chào hỏi cơ bản trong tiếng Anh",
+    "onboardingStatusLabel": "Trạng thái onboarding",
+    "onboardingComplete": "Đã hoàn thành",
+    "onboardingIncomplete": "Chưa hoàn thành",
+    "toggleOnboarding": "Chuyển đổi trạng thái"
+  },
+  "onboarding": {
+    "progressLabel": "Bước {{current}}/{{total}}",
+    "welcome": {
+      "eyebrow": "LinguaFlow",
+      "headline": "Học ngôn ngữ.\nMở rộng thế giới.",
+      "description": "Chinh phục tiếng Anh, tiếng Hàn, tiếng Trung và tiếng Nhật theo cách của riêng bạn.",
+      "primaryCta": "Bắt đầu hành trình",
+      "secondaryCta": "Khám phá ứng dụng"
+    },
+    "language": {
+      "title": "Bạn muốn học ngôn ngữ nào?",
+      "subtitle": "Chọn ngôn ngữ bạn muốn chinh phục đầu tiên.",
+      "options": {
+        "en": { "label": "Tiếng Anh" },
+        "ko": { "label": "Tiếng Hàn" },
+        "zh": { "label": "Tiếng Trung" },
+        "ja": { "label": "Tiếng Nhật" }
+      }
+    },
+    "goal": {
+      "title": "Bạn học để làm gì?",
+      "subtitle": "Chọn mục tiêu phù hợp với hành trình của bạn.",
+      "options": {
+        "daily-conversation": {
+          "title": "Giao tiếp hằng ngày",
+          "description": "Tự tin trò chuyện trong cuộc sống thường ngày."
+        },
+        "travel": {
+          "title": "Du lịch",
+          "description": "Sẵn sàng cho những chuyến đi khám phá thế giới."
+        },
+        "work": {
+          "title": "Công việc",
+          "description": "Nâng cao kỹ năng ngôn ngữ cho sự nghiệp."
+        },
+        "self-improvement": {
+          "title": "Phát triển bản thân",
+          "description": "Học vì đam mê và phát triển chính mình."
+        }
+      }
+    },
+    "level": {
+      "title": "Trình độ hiện tại của bạn?",
+      "subtitle": "Đừng lo nếu bạn mới bắt đầu. Mọi hành trình đều bắt đầu từ bước đầu tiên.",
+      "options": {
+        "beginner": {
+          "title": "Mới bắt đầu",
+          "description": "Mình chưa biết nhiều về ngôn ngữ này."
+        },
+        "elementary": {
+          "title": "Cơ bản",
+          "description": "Mình đã biết một số từ và câu đơn giản."
+        },
+        "intermediate": {
+          "title": "Có nền tảng",
+          "description": "Mình có thể hiểu và sử dụng những câu quen thuộc."
+        }
+      },
+      "finishCta": "Hoàn tất"
+    }
+  },
+  "tabs": {
+    "home": "Trang chủ",
+    "learn": "Học",
+    "review": "Ôn tập",
+    "practice": "Luyện tập",
+    "profile": "Cá nhân"
+  },
+  "home": {
+    "greeting": "Chào bạn! 👋",
+    "subGreeting": "Sẵn sàng cho bài học hôm nay?",
+    "journeyCardTitle": "Hành trình {{language}}",
+    "journeyLevelLabel": "Trình độ: {{level}}",
+    "journeyEmptyTitle": "Chọn ngôn ngữ đầu tiên",
+    "journeyEmptyBody": "Bạn chưa chọn ngôn ngữ để học. Hãy bắt đầu hành trình của mình.",
+    "journeyEmptyCta": "Chọn ngôn ngữ",
+    "dailyGoalTitle": "Mục tiêu hôm nay",
+    "dailyGoalProgress": "{{current}} / {{total}} phút",
+    "continueCardFirstEyebrow": "Bài học đầu tiên",
+    "continueCardNextEyebrow": "Bài học tiếp theo",
+    "continueCardCta": "Bắt đầu học",
+    "continueCardComingSoonEyebrow": "Sắp ra mắt",
+    "continueCardComingSoonTitle": "Khóa học đang được phát triển",
+    "continueCardLearnTabCta": "Xem lộ trình học",
+    "streakCardTitle": "Chuỗi ngày học",
+    "streakCardValue": "{{count}} ngày"
+  },
+  "learn": {
+    "chooseLanguageTitle": "Chọn ngôn ngữ để bắt đầu",
+    "chooseLanguageBody": "Bạn cần chọn một ngôn ngữ trước khi khám phá lộ trình học.",
+    "chooseLanguageCta": "Chọn ngôn ngữ",
+    "comingSoonTitle": "Khóa học đang được phát triển",
+    "comingSoonBody": "Nội dung học {{language}} đang được xây dựng. Vui lòng quay lại sau nhé!",
+    "unitsCompletedLabel": "{{completed}}/{{total}} bài học"
+  },
+  "review": {
+    "title": "Ôn tập",
+    "subtitle": "Ôn lại từ vựng để ghi nhớ lâu dài",
+    "dueLabel": "Từ đến hạn",
+    "newLabel": "Từ mới",
+    "startCta": "Bắt đầu ôn tập",
+    "statsTitle": "Thống kê",
+    "masteredLabel": "Đã thành thạo",
+    "learnedLabel": "Đã học",
+    "totalReviewsLabel": "Lượt ôn tập",
+    "sessionsCompletedLabel": "Phiên đã hoàn thành",
+    "noLessonsTitle": "Chưa có từ để ôn tập",
+    "noLessonsBody": "Hãy hoàn thành ít nhất một bài học ở tab Học trước khi bắt đầu ôn tập.",
+    "noLessonsCta": "Đi tới tab Học",
+    "allCaughtUpTitle": "Bạn đã ôn hết rồi!",
+    "allCaughtUpBody": "Không còn từ nào đến hạn ôn lúc này. Hãy quay lại sau hoặc học thêm bài mới.",
+    "flipHint": "Chạm để lật thẻ",
+    "exampleHeading": "Câu ví dụ",
+    "usageHeading": "Gợi ý cách dùng",
+    "partOfSpeech": {
+      "noun": "Danh từ",
+      "verb": "Động từ",
+      "adjective": "Tính từ",
+      "phrase": "Cụm từ",
+      "pronoun": "Đại từ",
+      "greeting": "Lời chào"
+    },
+    "rating": {
+      "again": "Chưa nhớ",
+      "hard": "Khó nhớ",
+      "good": "Đã nhớ",
+      "easy": "Rất dễ"
+    },
+    "rateHint": "Chạm vào thẻ để xem nghĩa trước khi đánh giá",
+    "emptySessionTitle": "Không có từ để ôn tập",
+    "emptySessionBody": "Có vẻ bạn đã ôn hết các từ hiện có. Hãy quay lại sau hoặc học thêm bài mới.",
+    "backCta": "Quay lại",
+    "summary": {
+      "title": "Hoàn thành phiên ôn tập!",
+      "body": "Bạn đã ôn {{count}} từ và nhận {{xp}} điểm XP.",
+      "cta": "Quay lại"
+    }
+  },
+  "unit": {
+    "notFoundTitle": "Không tìm thấy đơn vị học",
+    "notFoundBody": "Đơn vị học này hiện không khả dụng."
+  },
+  "grammar": {
+    "tabHeading": "Ngữ pháp",
+    "tabSubtitle": "Hiểu ngữ pháp qua ví dụ đơn giản",
+    "explanationHeading": "Giải thích",
+    "structureHeading": "Cấu trúc",
+    "examplesHeading": "Ví dụ",
+    "commonMistakesHeading": "Lỗi thường gặp",
+    "exercisesHeading": "Luyện tập",
+    "completeCta": "Hoàn thành chủ điểm",
+    "completedBadge": "Bạn đã hoàn thành chủ điểm này",
+    "backCta": "Quay lại",
+    "notFoundTitle": "Không tìm thấy chủ điểm",
+    "notFoundBody": "Chủ điểm ngữ pháp này hiện không khả dụng.",
+    "noContentTitle": "Chưa có nội dung ngữ pháp",
+    "noContentBody": "Nội dung ngữ pháp cho ngôn ngữ này đang được xây dựng."
+  },
+  "placement": {
+    "introTitle": "Kiểm tra xếp lớp",
+    "introBody": "10 câu hỏi ngắn giúp LinguaFlow gợi ý điểm bắt đầu phù hợp trong khoá Tiếng Anh A1 hiện có. Đây chỉ là gợi ý tham khảo, không phải bài kiểm tra năng lực chính thức.",
+    "startCta": "Bắt đầu",
+    "skipCta": "Bỏ qua",
+    "resultTitle": "Gợi ý điểm bắt đầu",
+    "resultDisclaimer": "Gợi ý dựa trên 10 câu hỏi ngắn, không phải đánh giá năng lực toàn diện.",
+    "overallScoreLabel": "Điểm tổng: {{correct}}/{{total}}",
+    "skillScoresHeading": "Điểm theo từng nhóm",
+    "skills": {
+      "vocabulary": "Từ vựng",
+      "grammar": "Ngữ pháp",
+      "reading": "Đọc hiểu",
+      "listening": "Nghe"
+    },
+    "levels": {
+      "beginner": "Bắt đầu từ đầu",
+      "elementary": "Có thể bắt đầu từ Unit 2",
+      "intermediate": "Có thể bắt đầu từ Unit 3"
+    },
+    "recommendedLessonLabel": "Bài học đề xuất: {{lesson}}",
+    "applyCta": "Áp dụng đề xuất",
+    "keepCta": "Giữ nguyên",
+    "appliedBadge": "Đã áp dụng gợi ý này",
+    "retakeCta": "Làm lại bài kiểm tra",
+    "backCta": "Quay lại",
+    "noContentTitle": "Chưa có bài kiểm tra xếp lớp",
+    "noContentBody": "Bài kiểm tra xếp lớp cho ngôn ngữ này đang được xây dựng.",
+    "homeCardTitle": "Kiểm tra xếp lớp",
+    "homeCardBody": "Làm bài kiểm tra ngắn để nhận gợi ý điểm bắt đầu phù hợp.",
+    "homeCardCta": "Bắt đầu kiểm tra",
+    "homeCardRetakeCta": "Làm lại",
+    "homeCardResultSummary": "Lần gần nhất: {{level}}",
+    "profileResultLabel": "Kết quả kiểm tra xếp lớp gần nhất",
+    "profileNoResult": "Chưa làm bài kiểm tra xếp lớp"
+  },
+  "conversation": {
+    "tabHeading": "Hội thoại",
+    "tabSubtitle": "Luyện hội thoại theo tình huống thực tế",
+    "hideTranslation": "Ẩn bản dịch",
+    "showTranslation": "Hiện bản dịch",
+    "practiceProgressLabel": "{{practiced}}/{{total}} câu đã luyện nói",
+    "taskHeading": "Nhiệm vụ",
+    "completedBadge": "Bạn đã hoàn thành tình huống này",
+    "backCta": "Quay lại",
+    "notFoundTitle": "Không tìm thấy tình huống",
+    "notFoundBody": "Tình huống hội thoại này hiện không khả dụng.",
+    "noContentTitle": "Chưa có nội dung hội thoại",
+    "noContentBody": "Nội dung hội thoại cho ngôn ngữ này đang được xây dựng."
+  },
+  "lesson": {
+    "vocabularyHeading": "Từ vựng",
+    "sentencesHeading": "Câu ví dụ",
+    "grammarHeading": "Mẹo ngữ pháp",
+    "exercisesHeading": "Luyện tập",
+    "shadowingHeading": "Luyện nghe & phát âm",
+    "shadowingSubtitle": "Nghe mẫu và tự luyện nói theo từng từ.",
+    "completeCta": "Hoàn thành bài học",
+    "completedBadge": "Bạn đã hoàn thành bài học này",
+    "backToUnitCta": "Quay lại danh sách bài học",
+    "notFoundTitle": "Không tìm thấy bài học",
+    "notFoundBody": "Bài học này hiện không khả dụng."
+  },
+  "pronunciation": {
+    "speakLabel": "Nghe phát âm",
+    "speakingLabel": "Đang phát âm",
+    "errorLabel": "Không thể phát âm, chạm để thử lại",
+    "speedToggleLabel": "Chuyển tốc độ đọc",
+    "speedNormal": "1x",
+    "speedSlow": "Chậm"
+  },
+  "shadowing": {
+    "practiceCta": "Tôi đã luyện nói",
+    "practicedBadge": "Đã luyện nói"
+  },
+  "listening": {
+    "tabTitle": "Luyện nghe",
+    "tabSubtitle": "Nghe và chọn đáp án đúng",
+    "startCta": "Bắt đầu luyện nghe",
+    "playCta": "Phát lại",
+    "noLessonsTitle": "Chưa có nội dung để luyện nghe",
+    "noLessonsBody": "Hãy hoàn thành ít nhất một bài học ở tab Học trước khi luyện nghe.",
+    "noLessonsCta": "Đi tới tab Học",
+    "chooseWordPrompt": "Nghe và chọn từ đúng",
+    "chooseMeaningPrompt": "Nghe và chọn nghĩa tiếng Việt đúng",
+    "chooseSentencePrompt": "Nghe câu và chọn đáp án đúng",
+    "completeCta": "Hoàn thành",
+    "resultTitle": "Hoàn thành luyện nghe!",
+    "resultBody": "Bạn trả lời đúng {{correct}}/{{total}} câu.",
+    "backCta": "Quay lại",
+    "statsTitle": "Thống kê",
+    "practicedSpeakingLabel": "Mục đã luyện nói",
+    "sessionsCompletedLabel": "Phiên luyện nghe"
+  },
+  "progress": {
+    "sectionTitle": "Tiến độ học tập",
+    "noLanguageBody": "Chọn ngôn ngữ và bắt đầu học để xem tiến độ tại đây.",
+    "lessonsLabel": "{{completed}}/{{total}} bài học",
+    "vocabularyLearnedLabel": "Từ vựng đã học",
+    "vocabularyReviewedLabel": "Từ đã ôn tập",
+    "speakingPracticedLabel": "Mục đã luyện nói",
+    "listeningSessionsLabel": "Phiên luyện nghe",
+    "grammarLabel": "Chủ đề ngữ pháp",
+    "conversationLabel": "Tình huống hội thoại",
+    "xpLabel": "Điểm XP",
+    "reviewSessionsLabel": "Phiên ôn tập",
+    "streakLabel": "Chuỗi ngày học",
+    "streakValue": "{{count}} ngày"
+  },
+  "profile": {
+    "title": "Cá nhân",
+    "subtitle": "Quản lý hành trình học tập của bạn",
+    "learningLanguageLabel": "Đang học",
+    "goalLabel": "Mục tiêu",
+    "levelLabel": "Trình độ",
+    "notSetValue": "Chưa chọn",
+    "resetSectionTitle": "Công cụ thử nghiệm",
+    "resetOnboardingCta": "Đặt lại onboarding",
+    "resetOnboardingBody": "Xoá lựa chọn ngôn ngữ, mục tiêu và trình độ để xem lại luồng giới thiệu.",
+    "resetOnboardingConfirmBody": "Bạn chắc chắn muốn đặt lại? Thao tác này sẽ xoá toàn bộ lựa chọn hiện tại.",
+    "resetOnboardingConfirmCancel": "Huỷ",
+    "resetOnboardingConfirmOk": "Đặt lại"
+  }
+}

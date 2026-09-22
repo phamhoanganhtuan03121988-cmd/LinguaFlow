@@ -1,0 +1,302 @@
+{
+  "common": {
+    "appName": "LinguaFlow",
+    "continue": "Continue",
+    "getStarted": "Get started",
+    "back": "Back"
+  },
+  "designPreview": {
+    "eyebrow": "Design system",
+    "greeting": "Welcome to LinguaFlow",
+    "tagline": "Learn a new language every day, your way",
+    "colorsTitle": "Color palette",
+    "typographyTitle": "Typography",
+    "sampleCardTitle": "Next lesson",
+    "sampleCardBody": "Basic greetings in English",
+    "onboardingStatusLabel": "Onboarding status",
+    "onboardingComplete": "Completed",
+    "onboardingIncomplete": "Not completed",
+    "toggleOnboarding": "Toggle status"
+  },
+  "onboarding": {
+    "progressLabel": "Step {{current}}/{{total}}",
+    "welcome": {
+      "eyebrow": "LinguaFlow",
+      "headline": "Learn a language.\nExpand your world.",
+      "description": "Master English, Korean, Chinese, and Japanese, your own way.",
+      "primaryCta": "Start your journey",
+      "secondaryCta": "Explore the app"
+    },
+    "language": {
+      "title": "Which language do you want to learn?",
+      "subtitle": "Choose the first language you want to master.",
+      "options": {
+        "en": { "label": "English" },
+        "ko": { "label": "Korean" },
+        "zh": { "label": "Chinese" },
+        "ja": { "label": "Japanese" }
+      }
+    },
+    "goal": {
+      "title": "Why are you learning?",
+      "subtitle": "Pick the goal that fits your journey.",
+      "options": {
+        "daily-conversation": {
+          "title": "Daily conversation",
+          "description": "Chat confidently in everyday life."
+        },
+        "travel": {
+          "title": "Travel",
+          "description": "Get ready for your next adventure."
+        },
+        "work": {
+          "title": "Work",
+          "description": "Level up your language skills for your career."
+        },
+        "self-improvement": {
+          "title": "Self-improvement",
+          "description": "Learn out of passion and personal growth."
+        }
+      }
+    },
+    "level": {
+      "title": "What's your current level?",
+      "subtitle": "Don't worry if you're just starting out. Every journey begins with a first step.",
+      "options": {
+        "beginner": {
+          "title": "Beginner",
+          "description": "I don't know much about this language yet."
+        },
+        "elementary": {
+          "title": "Elementary",
+          "description": "I know some words and simple sentences."
+        },
+        "intermediate": {
+          "title": "Intermediate",
+          "description": "I can understand and use familiar sentences."
+        }
+      },
+      "finishCta": "Finish"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "learn": "Learn",
+    "review": "Review",
+    "practice": "Practice",
+    "profile": "Profile"
+  },
+  "home": {
+    "greeting": "Hey there! 👋",
+    "subGreeting": "Ready for today's lesson?",
+    "journeyCardTitle": "{{language}} journey",
+    "journeyLevelLabel": "Level: {{level}}",
+    "journeyEmptyTitle": "Choose your first language",
+    "journeyEmptyBody": "You haven't picked a language yet. Start your journey now.",
+    "journeyEmptyCta": "Choose a language",
+    "dailyGoalTitle": "Today's goal",
+    "dailyGoalProgress": "{{current}} / {{total}} min",
+    "continueCardFirstEyebrow": "First lesson",
+    "continueCardNextEyebrow": "Next lesson",
+    "continueCardCta": "Start learning",
+    "continueCardComingSoonEyebrow": "Coming soon",
+    "continueCardComingSoonTitle": "This course is being developed",
+    "continueCardLearnTabCta": "See the learning path",
+    "streakCardTitle": "Learning streak",
+    "streakCardValue": "{{count}} days"
+  },
+  "learn": {
+    "chooseLanguageTitle": "Choose a language to get started",
+    "chooseLanguageBody": "Pick a language before exploring the learning path.",
+    "chooseLanguageCta": "Choose a language",
+    "comingSoonTitle": "This course is being developed",
+    "comingSoonBody": "{{language}} content is still being built. Please check back soon!",
+    "unitsCompletedLabel": "{{completed}}/{{total}} lessons"
+  },
+  "review": {
+    "title": "Review",
+    "subtitle": "Review vocabulary to remember it long-term",
+    "dueLabel": "Due words",
+    "newLabel": "New words",
+    "startCta": "Start review",
+    "statsTitle": "Stats",
+    "masteredLabel": "Mastered",
+    "learnedLabel": "Learned",
+    "totalReviewsLabel": "Reviews",
+    "sessionsCompletedLabel": "Sessions completed",
+    "noLessonsTitle": "No words to review yet",
+    "noLessonsBody": "Complete at least one lesson in the Learn tab before you start reviewing.",
+    "noLessonsCta": "Go to Learn",
+    "allCaughtUpTitle": "You're all caught up!",
+    "allCaughtUpBody": "No words are due right now. Check back later or learn a new lesson.",
+    "flipHint": "Tap to flip",
+    "exampleHeading": "Example sentence",
+    "usageHeading": "Usage tip",
+    "partOfSpeech": {
+      "noun": "Noun",
+      "verb": "Verb",
+      "adjective": "Adjective",
+      "phrase": "Phrase",
+      "pronoun": "Pronoun",
+      "greeting": "Greeting"
+    },
+    "rating": {
+      "again": "Forgot",
+      "hard": "Hard",
+      "good": "Good",
+      "easy": "Easy"
+    },
+    "rateHint": "Tap the card to see the meaning before rating it",
+    "emptySessionTitle": "No words to review",
+    "emptySessionBody": "Looks like you've reviewed everything available. Check back later or learn something new.",
+    "backCta": "Back",
+    "summary": {
+      "title": "Review session complete!",
+      "body": "You reviewed {{count}} words and earned {{xp}} XP.",
+      "cta": "Back"
+    }
+  },
+  "unit": {
+    "notFoundTitle": "Unit not found",
+    "notFoundBody": "This unit is not available right now."
+  },
+  "grammar": {
+    "tabHeading": "Grammar",
+    "tabSubtitle": "Understand grammar through simple examples",
+    "explanationHeading": "Explanation",
+    "structureHeading": "Structure",
+    "examplesHeading": "Examples",
+    "commonMistakesHeading": "Common mistakes",
+    "exercisesHeading": "Practice",
+    "completeCta": "Complete topic",
+    "completedBadge": "You've completed this topic",
+    "backCta": "Back",
+    "notFoundTitle": "Topic not found",
+    "notFoundBody": "This grammar topic is not available right now.",
+    "noContentTitle": "No grammar content yet",
+    "noContentBody": "Grammar content for this language is still being built."
+  },
+  "placement": {
+    "introTitle": "Placement test",
+    "introBody": "10 short questions to help LinguaFlow suggest a good starting point in the current English A1 course. This is a reference suggestion only, not an official assessment.",
+    "startCta": "Start",
+    "skipCta": "Skip",
+    "resultTitle": "Suggested starting point",
+    "resultDisclaimer": "Based on 10 short questions — not a comprehensive assessment.",
+    "overallScoreLabel": "Overall score: {{correct}}/{{total}}",
+    "skillScoresHeading": "Scores by skill",
+    "skills": {
+      "vocabulary": "Vocabulary",
+      "grammar": "Grammar",
+      "reading": "Reading",
+      "listening": "Listening"
+    },
+    "levels": {
+      "beginner": "Start from the beginning",
+      "elementary": "You could start at Unit 2",
+      "intermediate": "You could start at Unit 3"
+    },
+    "recommendedLessonLabel": "Recommended lesson: {{lesson}}",
+    "applyCta": "Apply suggestion",
+    "keepCta": "Keep current",
+    "appliedBadge": "This suggestion has been applied",
+    "retakeCta": "Retake the test",
+    "backCta": "Back",
+    "noContentTitle": "No placement test yet",
+    "noContentBody": "The placement test for this language is still being built.",
+    "homeCardTitle": "Placement test",
+    "homeCardBody": "Take a short test to get a suggested starting point.",
+    "homeCardCta": "Start test",
+    "homeCardRetakeCta": "Retake",
+    "homeCardResultSummary": "Last result: {{level}}",
+    "profileResultLabel": "Latest placement test result",
+    "profileNoResult": "No placement test taken yet"
+  },
+  "conversation": {
+    "tabHeading": "Conversation",
+    "tabSubtitle": "Practice real-life conversation situations",
+    "hideTranslation": "Hide translation",
+    "showTranslation": "Show translation",
+    "practiceProgressLabel": "{{practiced}}/{{total}} lines practiced",
+    "taskHeading": "Task",
+    "completedBadge": "You've completed this scenario",
+    "backCta": "Back",
+    "notFoundTitle": "Scenario not found",
+    "notFoundBody": "This conversation scenario is not available right now.",
+    "noContentTitle": "No conversation content yet",
+    "noContentBody": "Conversation content for this language is still being built."
+  },
+  "lesson": {
+    "vocabularyHeading": "Vocabulary",
+    "sentencesHeading": "Example sentences",
+    "grammarHeading": "Grammar tip",
+    "exercisesHeading": "Practice",
+    "shadowingHeading": "Listening & pronunciation",
+    "shadowingSubtitle": "Listen to each word and practice saying it aloud.",
+    "completeCta": "Complete lesson",
+    "completedBadge": "You've completed this lesson",
+    "backToUnitCta": "Back to lesson list",
+    "notFoundTitle": "Lesson not found",
+    "notFoundBody": "This lesson is not available right now."
+  },
+  "pronunciation": {
+    "speakLabel": "Listen to pronunciation",
+    "speakingLabel": "Speaking",
+    "errorLabel": "Couldn't play audio, tap to retry",
+    "speedToggleLabel": "Toggle playback speed",
+    "speedNormal": "1x",
+    "speedSlow": "Slow"
+  },
+  "shadowing": {
+    "practiceCta": "I practiced saying this",
+    "practicedBadge": "Practiced"
+  },
+  "listening": {
+    "tabTitle": "Listening",
+    "tabSubtitle": "Listen and choose the right answer",
+    "startCta": "Start listening practice",
+    "playCta": "Play again",
+    "noLessonsTitle": "No content to practice with yet",
+    "noLessonsBody": "Complete at least one lesson in the Learn tab before practicing listening.",
+    "noLessonsCta": "Go to Learn",
+    "chooseWordPrompt": "Listen and choose the right word",
+    "chooseMeaningPrompt": "Listen and choose the right Vietnamese meaning",
+    "chooseSentencePrompt": "Listen to the sentence and choose the right answer",
+    "completeCta": "Finish",
+    "resultTitle": "Listening practice complete!",
+    "resultBody": "You got {{correct}}/{{total}} correct.",
+    "backCta": "Back",
+    "statsTitle": "Stats",
+    "practicedSpeakingLabel": "Items practiced speaking",
+    "sessionsCompletedLabel": "Listening sessions"
+  },
+  "progress": {
+    "sectionTitle": "Learning progress",
+    "noLanguageBody": "Choose a language and start learning to see your progress here.",
+    "lessonsLabel": "{{completed}}/{{total}} lessons",
+    "vocabularyLearnedLabel": "Vocabulary learned",
+    "vocabularyReviewedLabel": "Vocabulary reviewed",
+    "speakingPracticedLabel": "Items practiced speaking",
+    "listeningSessionsLabel": "Listening sessions",
+    "grammarLabel": "Grammar topics",
+    "conversationLabel": "Conversation scenarios",
+    "xpLabel": "XP",
+    "reviewSessionsLabel": "Review sessions",
+    "streakLabel": "Learning streak",
+    "streakValue": "{{count}} days"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your learning journey",
+    "learningLanguageLabel": "Learning",
+    "goalLabel": "Goal",
+    "levelLabel": "Level",
+    "notSetValue": "Not set",
+    "resetSectionTitle": "Testing tools",
+    "resetOnboardingCta": "Reset onboarding",
+    "resetOnboardingBody": "Clears your language, goal, and level selections so you can preview the intro flow again.",
+    "resetOnboardingConfirmBody": "Are you sure? This will clear all your current selections.",
+    "resetOnboardingConfirmCancel": "Cancel",
+    "resetOnboardingConfirmOk": "Reset"
+  }
+}

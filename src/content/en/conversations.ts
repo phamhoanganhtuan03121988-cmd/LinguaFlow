@@ -1,0 +1,128 @@
+import type { ConversationScenario } from '../types';
+
+export const englishA1ConversationScenarios: ConversationScenario[] = [
+  {
+    id: 'conv-greetings',
+    languageCode: 'en',
+    level: 'A1',
+    title: 'Greetings',
+    titleVi: 'Chào hỏi',
+    descriptionVi: 'Luyện hội thoại chào hỏi cơ bản khi gặp ai đó.',
+    contextVi: 'Lan gặp Minh vào buổi sáng trên đường đến trường.',
+    dialogue: [
+      { id: 'greetings-turn-01', speaker: 'A', text: 'Hello, Minh!', translationVi: 'Xin chào, Minh!' },
+      {
+        id: 'greetings-turn-02',
+        speaker: 'B',
+        text: 'Hi, Lan! Good morning.',
+        translationVi: 'Chào Lan! Chào buổi sáng.',
+      },
+      {
+        id: 'greetings-turn-03',
+        speaker: 'A',
+        text: 'How are you today?',
+        translationVi: 'Hôm nay bạn khỏe không?',
+      },
+      {
+        id: 'greetings-turn-04',
+        speaker: 'B',
+        text: "I'm fine, thank you. And you?",
+        translationVi: 'Tôi khỏe, cảm ơn. Còn bạn thì sao?',
+      },
+      { id: 'greetings-turn-05', speaker: 'A', text: "I'm great, thanks!", translationVi: 'Tôi rất khỏe, cảm ơn!' },
+      { id: 'greetings-turn-06', speaker: 'B', text: 'See you later!', translationVi: 'Hẹn gặp lại!' },
+      { id: 'greetings-turn-07', speaker: 'A', text: 'Goodbye!', translationVi: 'Tạm biệt!' },
+      {
+        id: 'greetings-turn-08',
+        speaker: 'B',
+        text: 'Bye! Have a nice day.',
+        translationVi: 'Tạm biệt! Chúc một ngày tốt lành.',
+      },
+    ],
+    relatedVocabularyIds: ['l1-1-v1', 'l1-1-v3', 'l1-1-v5', 'l1-1-v6', 'l1-2-v1', 'l1-2-v2', 'l1-2-v6'],
+    task: {
+      type: 'choose-reply',
+      promptVi: "Ai đó hỏi bạn 'How are you?'. Bạn trả lời thế nào?",
+      options: [
+        { id: 'o1', text: "I'm fine, thank you. And you?" },
+        { id: 'o2', text: 'My name is Lan.' },
+        { id: 'o3', text: 'See you later.' },
+        { id: 'o4', text: 'Nice to meet you.' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "'How are you?' là câu hỏi thăm sức khỏe, nên trả lời bằng cách nói bạn cảm thấy thế nào.",
+    },
+  },
+  {
+    id: 'conv-introducing-yourself',
+    languageCode: 'en',
+    level: 'A1',
+    title: 'Introducing Yourself',
+    titleVi: 'Giới thiệu bản thân',
+    descriptionVi: 'Luyện hội thoại giới thiệu tên và quê quán khi gặp người mới.',
+    contextVi: 'Lan gặp một người bạn mới tên An tại lớp học tiếng Anh.',
+    dialogue: [
+      {
+        id: 'intro-yourself-turn-01',
+        speaker: 'A',
+        text: "Hi! What's your name?",
+        translationVi: 'Chào! Bạn tên gì?',
+      },
+      {
+        id: 'intro-yourself-turn-02',
+        speaker: 'B',
+        text: 'My name is An. Nice to meet you.',
+        translationVi: 'Tên tôi là An. Rất vui được gặp bạn.',
+      },
+      {
+        id: 'intro-yourself-turn-03',
+        speaker: 'A',
+        text: "Nice to meet you too. I'm Lan.",
+        translationVi: 'Tôi cũng rất vui được gặp bạn. Tôi là Lan.',
+      },
+      {
+        id: 'intro-yourself-turn-04',
+        speaker: 'B',
+        text: 'Where are you from, Lan?',
+        translationVi: 'Bạn đến từ đâu, Lan?',
+      },
+      {
+        id: 'intro-yourself-turn-05',
+        speaker: 'A',
+        text: "I'm from Hanoi. And you?",
+        translationVi: 'Tôi đến từ Hà Nội. Còn bạn?',
+      },
+      {
+        id: 'intro-yourself-turn-06',
+        speaker: 'B',
+        text: "I'm from Da Nang.",
+        translationVi: 'Tôi đến từ Đà Nẵng.',
+      },
+      {
+        id: 'intro-yourself-turn-07',
+        speaker: 'A',
+        text: 'Are you a student?',
+        translationVi: 'Bạn có phải là sinh viên không?',
+      },
+      {
+        id: 'intro-yourself-turn-08',
+        speaker: 'B',
+        text: 'Yes, I am a student.',
+        translationVi: 'Vâng, tôi là sinh viên.',
+      },
+    ],
+    relatedVocabularyIds: ['l2-1-v2', 'l2-1-v3', 'l2-1-v4', 'l2-2-v1', 'l2-2-v2', 'l2-3-v3'],
+    task: {
+      type: 'complete-reply',
+      promptVi: "Hoàn thành câu trả lời phù hợp cho câu hỏi 'What's your name?'",
+      options: [
+        { id: 'o1', text: 'My name is...' },
+        { id: 'o2', text: "I'm from..." },
+        { id: 'o3', text: 'See you later.' },
+        { id: 'o4', text: 'How are you?' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "Khi được hỏi tên, trả lời bằng 'My name is...' hoặc 'I'm...'.",
+    },
+  },
+];
