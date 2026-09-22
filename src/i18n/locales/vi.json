@@ -293,10 +293,21 @@
     "levelLabel": "Trình độ",
     "notSetValue": "Chưa chọn",
     "resetSectionTitle": "Công cụ thử nghiệm",
-    "resetOnboardingCta": "Đặt lại onboarding",
-    "resetOnboardingBody": "Xoá lựa chọn ngôn ngữ, mục tiêu và trình độ để xem lại luồng giới thiệu.",
-    "resetOnboardingConfirmBody": "Bạn chắc chắn muốn đặt lại? Thao tác này sẽ xoá toàn bộ lựa chọn hiện tại.",
+    "resetOnboardingCta": "Đặt lại toàn bộ dữ liệu",
+    "resetOnboardingBody": "Xoá toàn bộ tiến độ học tập của MỌI ngôn ngữ (bài học, ngữ pháp, hội thoại, SRS, XP, chuỗi ngày học) và lựa chọn onboarding.",
+    "resetOnboardingConfirmBody": "Bạn chắc chắn muốn đặt lại? Thao tác này sẽ xoá toàn bộ dữ liệu học tập của tất cả ngôn ngữ, không thể hoàn tác.",
     "resetOnboardingConfirmCancel": "Huỷ",
     "resetOnboardingConfirmOk": "Đặt lại"
+  },
+  "languageHub": {
+    "sectionTitle": "Ngôn ngữ của bạn",
+    "notStartedLabel": "Chưa bắt đầu",
+    "inProgressLabel": "Đơn vị {{unitIndex}} · {{level}}",
+    "completedLabel": "Đã hoàn thành khoá A1",
+    "startCta": "Bắt đầu học",
+    "continueCta": "Học tiếp",
+    "reviewCta": "Ôn tập lại",
+    "comingSoonLabel": "Nội dung đang được xây dựng",
+    "lastStudiedLabel": "Học gần nhất: {{date}}"
   }
 }

@@ -9,7 +9,7 @@ import { getConversationScenarioById } from '@/src/content/loader';
 import { ChatBubble } from '@/src/features/conversation/components/ChatBubble';
 import { ConversationTaskCard } from '@/src/features/conversation/components/ConversationTaskCard';
 import { PlaceholderScreen } from '@/src/features/tabs/PlaceholderScreen';
-import { useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
 export default function ConversationScreen() {
@@ -18,11 +18,13 @@ export default function ConversationScreen() {
   const { t } = useTranslation();
   const [showTranslation, setShowTranslation] = useState(true);
 
-  const isComplete = useProgressStore((state) => state.isConversationScenarioComplete(scenarioId));
-  const markConversationScenarioComplete = useProgressStore((state) => state.markConversationScenarioComplete);
-  const practicedSpeakingIds = useProgressStore((state) => state.practicedSpeakingIds);
-
+  // Resolved from the content itself, not the active language.
   const scenario = getConversationScenarioById(scenarioId);
+  const languageCode = scenario?.languageCode;
+
+  const isComplete = useProgressStore((state) => state.isConversationScenarioComplete(scenarioId, languageCode));
+  const markConversationScenarioComplete = useProgressStore((state) => state.markConversationScenarioComplete);
+  const { practicedSpeakingIds } = useProgressStore((state) => selectLanguageProgress(state, languageCode ?? null));
 
   if (!scenario) {
     return (
@@ -37,7 +39,7 @@ export default function ConversationScreen() {
   const practicedCount = scenario.dialogue.filter((line) => practicedSpeakingIds[`conv-${line.id}`]).length;
 
   const handleTaskAnswered = () => {
-    markConversationScenarioComplete(scenario.id);
+    markConversationScenarioComplete(scenario.id, scenario.languageCode);
   };
 
   return (

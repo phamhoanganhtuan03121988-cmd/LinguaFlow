@@ -17,11 +17,11 @@ type Phase = 'intro' | 'question' | 'result';
 export default function PlacementTestScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
   const setPlacementTestResult = useAppStore((state) => state.setPlacementTestResult);
   const applyPlacementRecommendation = useAppStore((state) => state.applyPlacementRecommendation);
 
-  const test = getPlacementTestForLanguage(selectedLanguage);
+  const test = getPlacementTestForLanguage(activeLanguageCode);
 
   // All hooks declared unconditionally, before any early return, per Rules of Hooks.
   const [phase, setPhase] = useState<Phase>('intro');
@@ -31,10 +31,12 @@ export default function PlacementTestScreen() {
   const [applied, setApplied] = useState(false);
 
   useEffect(() => {
-    if (result) {
-      setPlacementTestResult(result);
+    if (result && test) {
+      // Explicit languageCode from the test itself (not the active language) — the
+      // result always belongs to the language it was actually taken in.
+      setPlacementTestResult(result, test.languageCode);
     }
-  }, [result, setPlacementTestResult]);
+  }, [result, test, setPlacementTestResult]);
 
   if (!test) {
     return (
@@ -101,7 +103,7 @@ export default function PlacementTestScreen() {
               <Button
                 label={t('placement.applyCta')}
                 onPress={() => {
-                  applyPlacementRecommendation();
+                  applyPlacementRecommendation(test.languageCode);
                   setApplied(true);
                 }}
               />

@@ -18,10 +18,11 @@ export default function GrammarTopicScreen() {
   const { t } = useTranslation();
   const [answeredMap, setAnsweredMap] = useState<Record<string, boolean>>({});
 
-  const isComplete = useProgressStore((state) => state.isGrammarTopicComplete(topicId));
-  const markGrammarTopicComplete = useProgressStore((state) => state.markGrammarTopicComplete);
-
+  // Resolved from the content itself, not the active language.
   const topic = getGrammarTopicById(topicId);
+
+  const isComplete = useProgressStore((state) => state.isGrammarTopicComplete(topicId, topic?.languageCode));
+  const markGrammarTopicComplete = useProgressStore((state) => state.markGrammarTopicComplete);
 
   if (!topic) {
     return (
@@ -111,7 +112,7 @@ export default function GrammarTopicScreen() {
         ) : (
           <Button
             label={t('grammar.completeCta')}
-            onPress={() => markGrammarTopicComplete(topic.id)}
+            onPress={() => markGrammarTopicComplete(topic.id, topic.languageCode)}
             disabled={!allAnswered}
           />
         )}

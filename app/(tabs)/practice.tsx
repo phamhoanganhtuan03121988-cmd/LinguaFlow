@@ -10,7 +10,7 @@ import { getCourseProgress } from '@/src/features/learn/courseProgress';
 import { GrammarTopicCard } from '@/src/features/grammar/components/GrammarTopicCard';
 import { ScenarioCard } from '@/src/features/conversation/components/ScenarioCard';
 import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
 const SECTION_ACCENTS = [
@@ -23,14 +23,16 @@ const SECTION_ACCENTS = [
 export default function PracticeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
-  const practicedSpeakingIds = useProgressStore((state) => state.practicedSpeakingIds);
-  const totalListeningSessionsCompleted = useProgressStore((state) => state.totalListeningSessionsCompleted);
-  const completedGrammarTopicIds = useProgressStore((state) => state.completedGrammarTopicIds);
-  const completedConversationScenarioIds = useProgressStore((state) => state.completedConversationScenarioIds);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const {
+    completedLessonIds,
+    practicedSpeakingIds,
+    totalListeningSessionsCompleted,
+    completedGrammarTopicIds,
+    completedConversationScenarioIds,
+  } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
 
-  if (!selectedLanguage) {
+  if (!activeLanguageCode) {
     return (
       <EmptyState
         icon="flag-outline"
@@ -42,10 +44,10 @@ export default function PracticeScreen() {
     );
   }
 
-  const course = getCourseForLanguage(selectedLanguage);
+  const course = getCourseForLanguage(activeLanguageCode);
 
   if (!course) {
-    const language = getLanguageByCode(selectedLanguage);
+    const language = getLanguageByCode(activeLanguageCode);
     const languageLabel = language ? t(`onboarding.language.options.${language.code}.label`) : '';
 
     return (
@@ -71,8 +73,8 @@ export default function PracticeScreen() {
     );
   }
 
-  const grammarTopics = getGrammarTopicsForLanguage(selectedLanguage);
-  const conversationScenarios = getConversationScenariosForLanguage(selectedLanguage);
+  const grammarTopics = getGrammarTopicsForLanguage(activeLanguageCode);
+  const conversationScenarios = getConversationScenariosForLanguage(activeLanguageCode);
 
   return (
     <ScreenContainer maxWidth={520}>

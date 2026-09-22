@@ -3,22 +3,36 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Card } from '@/src/components/ui';
 import type { Lesson } from '@/src/content/types';
+import type { TimelineStatus } from '@/src/features/learn/courseProgress';
 import { colors, spacing, typography } from '@/src/theme';
 
 interface Props {
   lesson: Lesson;
   index: number;
-  completed: boolean;
+  status: TimelineStatus;
   onPress: () => void;
 }
 
-export function LessonListItem({ lesson, index, completed, onPress }: Props) {
+/**
+ * Status is purely a visual indicator (✓ completed / ▶ current / ○ upcoming) —
+ * every lesson stays tappable via onPress regardless of status, lessons are
+ * never locked.
+ */
+export function LessonListItem({ lesson, index, status, onPress }: Props) {
   return (
     <Pressable onPress={onPress}>
-      <Card style={styles.row}>
-        <View style={[styles.indexBadge, completed && styles.indexBadgeCompleted]}>
-          {completed ? (
+      <Card style={[styles.row, status === 'current' && styles.rowCurrent]}>
+        <View
+          style={[
+            styles.indexBadge,
+            status === 'completed' && styles.indexBadgeCompleted,
+            status === 'current' && styles.indexBadgeCurrent,
+          ]}
+        >
+          {status === 'completed' ? (
             <Ionicons name="checkmark" size={18} color={colors.textInverse} />
+          ) : status === 'current' ? (
+            <Ionicons name="play" size={14} color={colors.textInverse} />
           ) : (
             <Text style={styles.indexText}>{index + 1}</Text>
           )}
@@ -39,6 +53,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
   },
+  rowCurrent: {
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
   indexBadge: {
     width: 32,
     height: 32,
@@ -49,6 +67,9 @@ const styles = StyleSheet.create({
   },
   indexBadgeCompleted: {
     backgroundColor: colors.success,
+  },
+  indexBadgeCurrent: {
+    backgroundColor: colors.primary,
   },
   indexText: {
     ...typography.bodyMedium,

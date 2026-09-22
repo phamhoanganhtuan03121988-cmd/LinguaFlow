@@ -5,13 +5,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Button, ProgressTopBar, ScreenContainer, SelectableCard } from '@/src/components/ui';
 import { CURRENT_LEVELS } from '@/src/data/levels';
-import { useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
 import { colors, spacing, typography } from '@/src/theme';
 
 export default function LevelScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const currentLevel = useAppStore((state) => state.currentLevel);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const currentLevel = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode).currentLevel);
   const setCurrentLevel = useAppStore((state) => state.setCurrentLevel);
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
 

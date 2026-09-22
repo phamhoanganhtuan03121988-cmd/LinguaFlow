@@ -5,19 +5,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import { EmptyState, ScreenContainer } from '@/src/components/ui';
 import { getCourseForLanguage, getUnitsForCourse } from '@/src/content/loader';
 import { getLanguageByCode } from '@/src/data/languages';
-import { getUnitProgress } from '@/src/features/learn/courseProgress';
+import { getNextLessonForCourse, getUnitProgress, getUnitStatus } from '@/src/features/learn/courseProgress';
 import { UnitCard } from '@/src/features/learn/components/UnitCard';
 import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, spacing, typography } from '@/src/theme';
 
 export default function LearnScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
 
-  if (!selectedLanguage) {
+  if (!activeLanguageCode) {
     return (
       <EmptyState
         icon="flag-outline"
@@ -29,10 +29,10 @@ export default function LearnScreen() {
     );
   }
 
-  const course = getCourseForLanguage(selectedLanguage);
+  const course = getCourseForLanguage(activeLanguageCode);
 
   if (!course) {
-    const language = getLanguageByCode(selectedLanguage);
+    const language = getLanguageByCode(activeLanguageCode);
     const languageLabel = language ? t(`onboarding.language.options.${language.code}.label`) : '';
 
     return (
@@ -45,6 +45,7 @@ export default function LearnScreen() {
   }
 
   const units = getUnitsForCourse(course.id);
+  const nextLesson = getNextLessonForCourse(course, completedLessonIds);
 
   return (
     <ScreenContainer maxWidth={520}>
@@ -59,6 +60,7 @@ export default function LearnScreen() {
               unit={unit}
               completedCount={completedCount}
               totalCount={totalCount}
+              status={getUnitStatus(unit, nextLesson, completedCount, totalCount)}
               onPress={() => router.push(`/unit/${unit.id}`)}
             />
           );

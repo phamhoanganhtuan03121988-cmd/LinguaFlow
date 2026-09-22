@@ -11,8 +11,8 @@ import { colors, spacing, typography } from '@/src/theme';
 export default function LanguageScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const setSelectedLanguage = useAppStore((state) => state.setSelectedLanguage);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const setActiveLanguage = useAppStore((state) => state.setActiveLanguage);
 
   return (
     <ScreenContainer maxWidth={480}>
@@ -25,8 +25,8 @@ export default function LanguageScreen() {
         {LANGUAGES.map((language, index) => (
           <Animated.View key={language.code} entering={FadeInDown.delay(60 * index).duration(350)}>
             <SelectableCard
-              selected={selectedLanguage === language.code}
-              onPress={() => setSelectedLanguage(language.code)}
+              selected={activeLanguageCode === language.code}
+              onPress={() => setActiveLanguage(language.code)}
               title={t(`onboarding.language.options.${language.code}.label`)}
               description={language.nativeName}
               leading={<LanguageMonogram language={language} />}
@@ -40,7 +40,7 @@ export default function LanguageScreen() {
         <Button
           label={t('common.continue')}
           onPress={() => router.push('/onboarding/goal')}
-          disabled={!selectedLanguage}
+          disabled={!activeLanguageCode}
         />
       </View>
     </ScreenContainer>

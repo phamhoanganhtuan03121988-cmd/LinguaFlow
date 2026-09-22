@@ -1,0 +1,138 @@
+import type { ConversationScenario } from '../types';
+
+export const koreanA1ConversationScenarios: ConversationScenario[] = [
+  {
+    id: 'ko-conv-greetings',
+    languageCode: 'ko',
+    level: 'A1',
+    title: '인사',
+    titleVi: 'Chào hỏi',
+    descriptionVi: 'Luyện hội thoại chào hỏi cơ bản khi gặp ai đó bằng tiếng Hàn.',
+    contextVi: 'Lan gặp Minh vào buổi sáng trên đường đến trường.',
+    dialogue: [
+      { id: 'ko-greetings-turn-01', speaker: 'A', text: '안녕, 민!', translationVi: '(annyeong, Min!) Chào Minh!' },
+      {
+        id: 'ko-greetings-turn-02',
+        speaker: 'B',
+        text: '안녕, 란! 좋은 아침이에요.',
+        translationVi: '(annyeong, Ran! joeun achimieyo.) Chào Lan! Chào buổi sáng.',
+      },
+      {
+        id: 'ko-greetings-turn-03',
+        speaker: 'A',
+        text: '오늘 잘 지내요?',
+        translationVi: '(oneul jal jinaeyo?) Hôm nay bạn khỏe không?',
+      },
+      {
+        id: 'ko-greetings-turn-04',
+        speaker: 'B',
+        text: '저는 좋아요, 감사합니다. 당신은요?',
+        translationVi: '(jeoneun joayo, gamsahamnida. dangsineunyo?) Tôi khỏe, cảm ơn. Còn bạn thì sao?',
+      },
+      {
+        id: 'ko-greetings-turn-05',
+        speaker: 'A',
+        text: '저는 아주 좋아요, 고마워요!',
+        translationVi: '(jeoneun aju joayo, gomawoyo!) Tôi rất khỏe, cảm ơn!',
+      },
+      { id: 'ko-greetings-turn-06', speaker: 'B', text: '또 봐요!', translationVi: '(tto bwayo!) Hẹn gặp lại!' },
+      {
+        id: 'ko-greetings-turn-07',
+        speaker: 'A',
+        text: '안녕히 가세요!',
+        translationVi: '(annyeonghi gaseyo!) Tạm biệt!',
+      },
+      {
+        id: 'ko-greetings-turn-08',
+        speaker: 'B',
+        text: '안녕히 계세요! 좋은 하루 되세요.',
+        translationVi: '(annyeonghi gyeseyo! joeun haru doeseyo.) Tạm biệt! Chúc một ngày tốt lành.',
+      },
+    ],
+    relatedVocabularyIds: ['ko-l1-1-v1', 'ko-l1-1-v3', 'ko-l1-1-v6', 'ko-l1-2-v1', 'ko-l1-2-v2', 'ko-l1-2-v6'],
+    task: {
+      type: 'choose-reply',
+      promptVi: "Ai đó hỏi bạn '잘 지내요?'. Bạn trả lời thế nào?",
+      options: [
+        { id: 'o1', text: '저는 좋아요, 감사합니다. 당신은요?' },
+        { id: 'o2', text: '제 이름은 란이에요.' },
+        { id: 'o3', text: '또 봐요.' },
+        { id: 'o4', text: '만나서 반가워요.' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "'잘 지내요?' là câu hỏi thăm sức khỏe, nên trả lời bằng cách nói bạn cảm thấy thế nào.",
+    },
+  },
+  {
+    id: 'ko-conv-introducing-yourself',
+    languageCode: 'ko',
+    level: 'A1',
+    title: '자기소개',
+    titleVi: 'Giới thiệu bản thân',
+    descriptionVi: 'Luyện hội thoại giới thiệu tên và quê quán khi gặp người mới bằng tiếng Hàn.',
+    contextVi: 'Lan gặp một người bạn mới tên An tại lớp học tiếng Hàn.',
+    dialogue: [
+      {
+        id: 'ko-intro-yourself-turn-01',
+        speaker: 'A',
+        text: '안녕! 이름이 뭐예요?',
+        translationVi: '(annyeong! ireumi mwoyeyo?) Chào! Bạn tên gì?',
+      },
+      {
+        id: 'ko-intro-yourself-turn-02',
+        speaker: 'B',
+        text: '제 이름은 안이에요. 만나서 반가워요.',
+        translationVi: '(je ireumeun An-ieyo. mannaseo bangawoyo.) Tên tôi là An. Rất vui được gặp bạn.',
+      },
+      {
+        id: 'ko-intro-yourself-turn-03',
+        speaker: 'A',
+        text: '저도 만나서 반가워요. 저는 란이에요.',
+        translationVi: '(jeodo mannaseo bangawoyo. jeoneun Ran-ieyo.) Tôi cũng rất vui được gặp bạn. Tôi là Lan.',
+      },
+      {
+        id: 'ko-intro-yourself-turn-04',
+        speaker: 'B',
+        text: '란, 어디에서 왔어요?',
+        translationVi: '(Ran, eodieseo wasseoyo?) Bạn đến từ đâu, Lan?',
+      },
+      {
+        id: 'ko-intro-yourself-turn-05',
+        speaker: 'A',
+        text: '저는 하노이에서 왔어요. 당신은요?',
+        translationVi: '(jeoneun Hanoi-eseo wasseoyo. dangsineunyo?) Tôi đến từ Hà Nội. Còn bạn?',
+      },
+      {
+        id: 'ko-intro-yourself-turn-06',
+        speaker: 'B',
+        text: '저는 다낭에서 왔어요.',
+        translationVi: '(jeoneun Da Nang-eseo wasseoyo.) Tôi đến từ Đà Nẵng.',
+      },
+      {
+        id: 'ko-intro-yourself-turn-07',
+        speaker: 'A',
+        text: '학생이에요?',
+        translationVi: '(haksaeng-ieyo?) Bạn có phải là sinh viên không?',
+      },
+      {
+        id: 'ko-intro-yourself-turn-08',
+        speaker: 'B',
+        text: '네, 저는 학생이에요.',
+        translationVi: '(ne, jeoneun haksaeng-ieyo.) Vâng, tôi là sinh viên.',
+      },
+    ],
+    relatedVocabularyIds: ['ko-l2-1-v3', 'ko-l2-1-v4', 'ko-l2-2-v1', 'ko-l2-2-v2', 'ko-l2-3-v3'],
+    task: {
+      type: 'complete-reply',
+      promptVi: "Hoàn thành câu trả lời phù hợp cho câu hỏi '이름이 뭐예요?'",
+      options: [
+        { id: 'o1', text: '제 이름은...이에요' },
+        { id: 'o2', text: '저는...에서 왔어요' },
+        { id: 'o3', text: '또 봐요.' },
+        { id: 'o4', text: '잘 지내요?' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "Khi được hỏi tên, trả lời bằng '제 이름은...이에요' hoặc '저는...이에요'.",
+    },
+  },
+];

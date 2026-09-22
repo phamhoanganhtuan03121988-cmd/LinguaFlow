@@ -5,11 +5,16 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Card, LanguageMonogram, ProgressBar, ScreenContainer } from '@/src/components/ui';
-import { getLanguageByCode } from '@/src/data/languages';
+import { LANGUAGES, getLanguageByCode } from '@/src/data/languages';
+import { LanguageCard } from '@/src/features/languageHub/components/LanguageCard';
+import { getLanguageHubEntry } from '@/src/features/languageHub/languageSummary';
+import { getNextLessonForCourse } from '@/src/features/learn/courseProgress';
+import { getCourseForLanguage } from '@/src/content/loader';
 import { getProgressSummary } from '@/src/features/progress/progressSummary';
-import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
-import { useReviewStore } from '@/src/store/useReviewStore';
+import { resetAllData } from '@/src/store/resetAllData';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageReview, useReviewStore } from '@/src/store/useReviewStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
 export default function ProfileScreen() {
@@ -17,26 +22,51 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [confirmingReset, setConfirmingReset] = useState(false);
 
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
   const learningGoal = useAppStore((state) => state.learningGoal);
-  const currentLevel = useAppStore((state) => state.currentLevel);
-  const resetOnboarding = useAppStore((state) => state.resetOnboarding);
+  const languageProfile = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
+  const appLanguages = useAppStore((state) => state.languages);
+  const setActiveLanguage = useAppStore((state) => state.setActiveLanguage);
 
-  const placementTestResult = useAppStore((state) => state.placementTestResult);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
-  const practicedSpeakingIds = useProgressStore((state) => state.practicedSpeakingIds);
-  const totalListeningSessionsCompleted = useProgressStore((state) => state.totalListeningSessionsCompleted);
-  const completedGrammarTopicIds = useProgressStore((state) => state.completedGrammarTopicIds);
-  const completedConversationScenarioIds = useProgressStore((state) => state.completedConversationScenarioIds);
+  const {
+    completedLessonIds,
+    practicedSpeakingIds,
+    totalListeningSessionsCompleted,
+    completedGrammarTopicIds,
+    completedConversationScenarioIds,
+  } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
+  const progressLanguages = useProgressStore((state) => state.languages);
   const currentStreakDays = useProgressStore((state) => state.currentStreakDays);
-  const wordStates = useReviewStore((state) => state.wordStates);
+  const { wordStates, totalReviewSessionsCompleted } = useReviewStore((state) =>
+    selectLanguageReview(state, activeLanguageCode),
+  );
   const xp = useReviewStore((state) => state.xp);
-  const totalReviewSessionsCompleted = useReviewStore((state) => state.totalReviewSessionsCompleted);
 
-  const language = getLanguageByCode(selectedLanguage);
+  const language = getLanguageByCode(activeLanguageCode);
+
+  const languageHubEntries = LANGUAGES.map((option) =>
+    getLanguageHubEntry(
+      option.code,
+      appLanguages[option.code]?.currentLevel ?? null,
+      progressLanguages[option.code]?.completedLessonIds ?? {},
+      progressLanguages[option.code]?.lastStudiedAt ?? null,
+    ),
+  );
+
+  const handleLanguageCardPress = (code: (typeof LANGUAGES)[number]['code']) => {
+    setActiveLanguage(code);
+    const course = getCourseForLanguage(code);
+    const completedForCode = progressLanguages[code]?.completedLessonIds ?? {};
+    const nextLesson = course ? getNextLessonForCourse(course, completedForCode) : undefined;
+    if (nextLesson) {
+      router.push(`/lesson/${nextLesson.id}`);
+    } else {
+      router.push('/home');
+    }
+  };
 
   const summary = getProgressSummary(
-    selectedLanguage,
+    activeLanguageCode,
     {
       completedLessonIds,
       practicedSpeakingIds,
@@ -49,7 +79,7 @@ export default function ProfileScreen() {
   );
 
   const handleConfirmReset = () => {
-    resetOnboarding();
+    resetAllData();
     setConfirmingReset(false);
     router.replace('/onboarding/welcome');
   };
@@ -58,6 +88,18 @@ export default function ProfileScreen() {
     <ScreenContainer maxWidth={480}>
       <Text style={styles.title}>{t('profile.title')}</Text>
       <Text style={styles.subtitle}>{t('profile.subtitle')}</Text>
+
+      <Text style={styles.hubTitle}>{t('languageHub.sectionTitle')}</Text>
+      <View style={styles.hubList}>
+        {languageHubEntries.map((entry) => (
+          <LanguageCard
+            key={entry.code}
+            entry={entry}
+            isActive={entry.code === activeLanguageCode}
+            onPress={() => handleLanguageCardPress(entry.code)}
+          />
+        ))}
+      </View>
 
       <Card style={styles.section}>
         <Text style={styles.sectionTitle}>{t('progress.sectionTitle')}</Text>
@@ -170,7 +212,9 @@ export default function ProfileScreen() {
           <View style={styles.rowTextColumn}>
             <Text style={styles.rowLabel}>{t('profile.levelLabel')}</Text>
             <Text style={styles.rowValue}>
-              {currentLevel ? t(`onboarding.level.options.${currentLevel}.title`) : t('profile.notSetValue')}
+              {languageProfile.currentLevel
+                ? t(`onboarding.level.options.${languageProfile.currentLevel}.title`)
+                : t('profile.notSetValue')}
             </Text>
           </View>
         </View>
@@ -186,8 +230,8 @@ export default function ProfileScreen() {
           <View style={styles.rowTextColumn}>
             <Text style={styles.rowLabel}>{t('placement.profileResultLabel')}</Text>
             <Text style={styles.rowValue}>
-              {placementTestResult
-                ? t(`placement.levels.${placementTestResult.recommendedLevel}`)
+              {languageProfile.placementTestResult
+                ? t(`placement.levels.${languageProfile.placementTestResult.recommendedLevel}`)
                 : t('placement.profileNoResult')}
             </Text>
           </View>
@@ -242,6 +286,15 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: spacing.md,
+  },
+  hubTitle: {
+    ...typography.h3,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
+  },
+  hubList: {
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
   },
   row: {
     flexDirection: 'row',

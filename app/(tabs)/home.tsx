@@ -9,8 +9,8 @@ import { getCourseForLanguage, getPlacementTestForLanguage } from '@/src/content
 import { getLanguageByCode } from '@/src/data/languages';
 import { CURRENT_LEVELS } from '@/src/data/levels';
 import { getNextLessonForCourse } from '@/src/features/learn/courseProgress';
-import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
 const DAILY_GOAL_MINUTES = 10;
@@ -19,19 +19,18 @@ const DAILY_GOAL_PROGRESS_MINUTES = 0;
 export default function HomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const currentLevel = useAppStore((state) => state.currentLevel);
-  const placementTestResult = useAppStore((state) => state.placementTestResult);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const languageProfile = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
+  const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
   const currentStreakDays = useProgressStore((state) => state.currentStreakDays);
 
-  const language = getLanguageByCode(selectedLanguage);
-  const levelMeta = CURRENT_LEVELS.find((level) => level.id === currentLevel);
+  const language = getLanguageByCode(activeLanguageCode);
+  const levelMeta = CURRENT_LEVELS.find((level) => level.id === languageProfile.currentLevel);
 
-  const course = getCourseForLanguage(selectedLanguage);
+  const course = getCourseForLanguage(activeLanguageCode);
   const nextLesson = course ? getNextLessonForCourse(course, completedLessonIds) : undefined;
   const hasStartedLearning = Object.keys(completedLessonIds).length > 0;
-  const placementTest = getPlacementTestForLanguage(selectedLanguage);
+  const placementTest = getPlacementTestForLanguage(activeLanguageCode);
 
   return (
     <ScreenContainer maxWidth={520}>
@@ -81,9 +80,9 @@ export default function HomeScreen() {
               <View style={styles.journeyTextColumn}>
                 <Text style={styles.cardTitle}>{t('placement.homeCardTitle')}</Text>
                 <Text style={styles.cardSubtitle}>
-                  {placementTestResult
+                  {languageProfile.placementTestResult
                     ? t('placement.homeCardResultSummary', {
-                        level: t(`placement.levels.${placementTestResult.recommendedLevel}`),
+                        level: t(`placement.levels.${languageProfile.placementTestResult.recommendedLevel}`),
                       })
                     : t('placement.homeCardBody')}
                 </Text>
@@ -91,7 +90,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.progressSpacing}>
               <Button
-                label={placementTestResult ? t('placement.homeCardRetakeCta') : t('placement.homeCardCta')}
+                label={languageProfile.placementTestResult ? t('placement.homeCardRetakeCta') : t('placement.homeCardCta')}
                 variant="secondary"
                 onPress={() => router.push('/placement-test')}
               />

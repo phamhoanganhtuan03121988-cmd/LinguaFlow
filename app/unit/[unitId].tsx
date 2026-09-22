@@ -3,27 +3,32 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ProgressTopBar, ScreenContainer } from '@/src/components/ui';
-import { getLessonsForUnit, getUnitById } from '@/src/content/loader';
+import { getCourseById, getLessonsForUnit, getUnitById } from '@/src/content/loader';
 import { LessonListItem } from '@/src/features/learn/components/LessonListItem';
+import { getLessonStatus, getNextLessonForCourse } from '@/src/features/learn/courseProgress';
 import { PlaceholderScreen } from '@/src/features/tabs/PlaceholderScreen';
-import { useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, spacing, typography } from '@/src/theme';
 
 export default function UnitScreen() {
   const { unitId } = useLocalSearchParams<{ unitId: string }>();
   const router = useRouter();
   const { t } = useTranslation();
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
 
+  // Resolved from the content itself (unit -> course -> languageCode), not the
+  // active language — same reasoning as lesson/grammar/conversation screens.
   const unit = getUnitById(unitId);
+  const course = unit ? getCourseById(unit.courseId) : undefined;
+  const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, course?.languageCode ?? null));
 
-  if (!unit) {
+  if (!unit || !course) {
     return (
       <PlaceholderScreen icon="alert-circle-outline" titleKey="unit.notFoundTitle" bodyKey="unit.notFoundBody" />
     );
   }
 
-  const lessons = getLessonsForUnit(unit.id);
+  const lessons = getLessonsForUnit(unit.id, course.languageCode);
+  const nextLesson = getNextLessonForCourse(course, completedLessonIds);
 
   return (
     <ScreenContainer maxWidth={520}>
@@ -36,7 +41,7 @@ export default function UnitScreen() {
             key={lesson.id}
             lesson={lesson}
             index={index}
-            completed={Boolean(completedLessonIds[lesson.id])}
+            status={getLessonStatus(lesson, nextLesson, completedLessonIds)}
             onPress={() => router.push(`/lesson/${lesson.id}`)}
           />
         ))}

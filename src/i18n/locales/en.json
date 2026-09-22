@@ -293,10 +293,21 @@
     "levelLabel": "Level",
     "notSetValue": "Not set",
     "resetSectionTitle": "Testing tools",
-    "resetOnboardingCta": "Reset onboarding",
-    "resetOnboardingBody": "Clears your language, goal, and level selections so you can preview the intro flow again.",
-    "resetOnboardingConfirmBody": "Are you sure? This will clear all your current selections.",
+    "resetOnboardingCta": "Reset all data",
+    "resetOnboardingBody": "Clears ALL languages' learning progress (lessons, grammar, conversation, SRS, XP, streak) and onboarding selections.",
+    "resetOnboardingConfirmBody": "Are you sure? This will clear all learning data for every language, and cannot be undone.",
     "resetOnboardingConfirmCancel": "Cancel",
     "resetOnboardingConfirmOk": "Reset"
+  },
+  "languageHub": {
+    "sectionTitle": "Your languages",
+    "notStartedLabel": "Not started",
+    "inProgressLabel": "Unit {{unitIndex}} · {{level}}",
+    "completedLabel": "A1 course completed",
+    "startCta": "Start learning",
+    "continueCta": "Continue learning",
+    "reviewCta": "Review again",
+    "comingSoonLabel": "Content in development",
+    "lastStudiedLabel": "Last studied: {{date}}"
   }
 }

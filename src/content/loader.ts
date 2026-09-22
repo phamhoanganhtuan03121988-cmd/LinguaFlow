@@ -11,33 +11,96 @@ import type {
   VocabularyItem,
 } from './types';
 
+/**
+ * Content ids (unit/lesson/grammar/conversation) are authored per-language-pack
+ * and are NOT guaranteed unique across packs (e.g. an "en" and a "zh" pack could
+ * both use "u1-greetings"). The composite-key maps below are the safe lookup path
+ * for any caller that knows which language it's resolving for — used internally
+ * whenever we already have a Course/Unit in hand, so the whole course -> units ->
+ * lessons chain resolves correctly even if ids collide across packs.
+ *
+ * The flat `*ById` maps below exist only for backward compatibility with callers
+ * that have no language context (e.g. a bare `[lessonId]` route param). They are
+ * "first pack registered wins" and guarded: a real id collision across packs
+ * throws in dev (never silently shadows one language's content with another's)
+ * and logs an error in production rather than crashing a shipped build.
+ */
+function compositeKey(languageCode: LanguageCode, id: string): string {
+  return `${languageCode}::${id}`;
+}
+
+function registerWithCollisionGuard<T>(
+  flatMap: Map<string, T>,
+  id: string,
+  value: T,
+  kind: string,
+  languageCode: LanguageCode,
+): void {
+  if (flatMap.has(id)) {
+    const message =
+      `[content] Duplicate ${kind} id "${id}" — already registered by another language pack before "${languageCode}". ` +
+      `Content ids must be unique across language packs unless every caller resolving this id passes languageCode ` +
+      `explicitly. Rename this id in the "${languageCode}" pack.`;
+    if (__DEV__) {
+      throw new Error(message);
+    }
+    console.error(message);
+    return;
+  }
+  flatMap.set(id, value);
+}
+
 const coursesById = new Map<string, Course>();
 const courseByLanguage = new Map<LanguageCode, Course>();
+
 const unitsById = new Map<string, Unit>();
+const unitsByCompositeKey = new Map<string, Unit>();
+
 const lessonsById = new Map<string, Lesson>();
+const lessonsByCompositeKey = new Map<string, Lesson>();
+
 const grammarTopicsById = new Map<string, GrammarTopic>();
+const grammarTopicsByCompositeKey = new Map<string, GrammarTopic>();
 const grammarTopicsByLanguage = new Map<LanguageCode, GrammarTopic[]>();
+
 const conversationScenariosById = new Map<string, ConversationScenario>();
+const conversationScenariosByCompositeKey = new Map<string, ConversationScenario>();
 const conversationScenariosByLanguage = new Map<LanguageCode, ConversationScenario[]>();
+
 const placementTestByLanguage = new Map<LanguageCode, PlacementTest>();
 
 for (const pack of Object.values(CONTENT_PACKS)) {
   if (!pack) continue;
+  const languageCode = pack.course.languageCode;
+
   coursesById.set(pack.course.id, pack.course);
-  courseByLanguage.set(pack.course.languageCode, pack.course);
-  for (const unit of pack.units) unitsById.set(unit.id, unit);
-  for (const lesson of pack.lessons) lessonsById.set(lesson.id, lesson);
+  courseByLanguage.set(languageCode, pack.course);
+
+  for (const unit of pack.units) {
+    unitsByCompositeKey.set(compositeKey(languageCode, unit.id), unit);
+    registerWithCollisionGuard(unitsById, unit.id, unit, 'unit', languageCode);
+  }
+  for (const lesson of pack.lessons) {
+    lessonsByCompositeKey.set(compositeKey(languageCode, lesson.id), lesson);
+    registerWithCollisionGuard(lessonsById, lesson.id, lesson, 'lesson', languageCode);
+  }
 
   const grammarTopics = pack.grammarTopics ?? [];
-  grammarTopicsByLanguage.set(pack.course.languageCode, grammarTopics);
-  for (const topic of grammarTopics) grammarTopicsById.set(topic.id, topic);
+  grammarTopicsByLanguage.set(languageCode, grammarTopics);
+  for (const topic of grammarTopics) {
+    grammarTopicsByCompositeKey.set(compositeKey(languageCode, topic.id), topic);
+    registerWithCollisionGuard(grammarTopicsById, topic.id, topic, 'grammar topic', languageCode);
+  }
 
   const conversationScenarios = pack.conversationScenarios ?? [];
-  conversationScenariosByLanguage.set(pack.course.languageCode, conversationScenarios);
-  for (const scenario of conversationScenarios) conversationScenariosById.set(scenario.id, scenario);
+  conversationScenariosByLanguage.set(languageCode, conversationScenarios);
+  for (const scenario of conversationScenarios) {
+    conversationScenariosByCompositeKey.set(compositeKey(languageCode, scenario.id), scenario);
+    registerWithCollisionGuard(conversationScenariosById, scenario.id, scenario, 'conversation scenario', languageCode);
+  }
 
   if (pack.placementTest) {
-    placementTestByLanguage.set(pack.course.languageCode, pack.placementTest);
+    placementTestByLanguage.set(languageCode, pack.placementTest);
   }
 }
 
@@ -63,11 +126,15 @@ export function getCourseById(id: string): Course | undefined {
   return coursesById.get(id);
 }
 
-export function getUnitById(id: string): Unit | undefined {
+/** Pass languageCode when known (e.g. resolving from a Course/active language) for collision-safe lookup. */
+export function getUnitById(id: string, languageCode?: LanguageCode): Unit | undefined {
+  if (languageCode) return unitsByCompositeKey.get(compositeKey(languageCode, id));
   return unitsById.get(id);
 }
 
-export function getLessonById(id: string): Lesson | undefined {
+/** Pass languageCode when known (e.g. resolving from a Course/active language) for collision-safe lookup. */
+export function getLessonById(id: string, languageCode?: LanguageCode): Lesson | undefined {
+  if (languageCode) return lessonsByCompositeKey.get(compositeKey(languageCode, id));
   return lessonsById.get(id);
 }
 
@@ -75,15 +142,22 @@ export function getUnitsForCourse(courseId: string): Unit[] {
   const course = coursesById.get(courseId);
   if (!course) return [];
   return course.unitIds
-    .map((id) => unitsById.get(id))
+    .map((id) => getUnitById(id, course.languageCode))
     .filter((unit): unit is Unit => Boolean(unit));
 }
 
-export function getLessonsForUnit(unitId: string): Lesson[] {
-  const unit = unitsById.get(unitId);
+/**
+ * Pass languageCode when known. Without it, the unit is resolved via the flat
+ * (collision-guarded) map, but its lessons are still resolved through the unit's
+ * own course language once found — so only the initial bare-id unit lookup is a
+ * shared ambiguity point, not the whole unit -> lessons chain.
+ */
+export function getLessonsForUnit(unitId: string, languageCode?: LanguageCode): Lesson[] {
+  const unit = getUnitById(unitId, languageCode);
   if (!unit) return [];
+  const resolvedLanguageCode = languageCode ?? getCourseById(unit.courseId)?.languageCode;
   return unit.lessonIds
-    .map((id) => lessonsById.get(id))
+    .map((id) => getLessonById(id, resolvedLanguageCode))
     .filter((lesson): lesson is Lesson => Boolean(lesson));
 }
 
@@ -106,7 +180,9 @@ export function getGrammarTopicsForLanguage(code: LanguageCode | null | undefine
   return grammarTopicsByLanguage.get(code) ?? [];
 }
 
-export function getGrammarTopicById(id: string): GrammarTopic | undefined {
+/** Pass languageCode when known for collision-safe lookup. */
+export function getGrammarTopicById(id: string, languageCode?: LanguageCode): GrammarTopic | undefined {
+  if (languageCode) return grammarTopicsByCompositeKey.get(compositeKey(languageCode, id));
   return grammarTopicsById.get(id);
 }
 
@@ -115,7 +191,9 @@ export function getConversationScenariosForLanguage(code: LanguageCode | null | 
   return conversationScenariosByLanguage.get(code) ?? [];
 }
 
-export function getConversationScenarioById(id: string): ConversationScenario | undefined {
+/** Pass languageCode when known for collision-safe lookup. */
+export function getConversationScenarioById(id: string, languageCode?: LanguageCode): ConversationScenario | undefined {
+  if (languageCode) return conversationScenariosByCompositeKey.get(compositeKey(languageCode, id));
   return conversationScenariosById.get(id);
 }
 

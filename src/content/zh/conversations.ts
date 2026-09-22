@@ -1,0 +1,123 @@
+import type { ConversationScenario } from '../types';
+
+export const chineseA1ConversationScenarios: ConversationScenario[] = [
+  {
+    id: 'zh-conv-greetings',
+    languageCode: 'zh',
+    level: 'A1',
+    title: '问候',
+    titleVi: 'Chào hỏi',
+    descriptionVi: 'Luyện hội thoại chào hỏi cơ bản khi gặp ai đó bằng tiếng Trung.',
+    contextVi: 'Lan gặp Minh vào buổi sáng trên đường đến trường.',
+    dialogue: [
+      { id: 'zh-greetings-turn-01', speaker: 'A', text: '你好，明！', translationVi: '(Nǐ hǎo, Míng!) Xin chào, Minh!' },
+      {
+        id: 'zh-greetings-turn-02',
+        speaker: 'B',
+        text: '嗨，兰！早上好。',
+        translationVi: '(Hāi, Lán! Zǎoshang hǎo.) Chào Lan! Chào buổi sáng.',
+      },
+      { id: 'zh-greetings-turn-03', speaker: 'A', text: '你今天好吗？', translationVi: '(Nǐ jīntiān hǎo ma?) Hôm nay bạn khỏe không?' },
+      {
+        id: 'zh-greetings-turn-04',
+        speaker: 'B',
+        text: '我很好，谢谢。你呢？',
+        translationVi: '(Wǒ hěn hǎo, xièxiè. Nǐ ne?) Tôi khỏe, cảm ơn. Còn bạn?',
+      },
+      { id: 'zh-greetings-turn-05', speaker: 'A', text: '我也很好，谢谢！', translationVi: '(Wǒ yě hěn hǎo, xièxiè!) Tôi cũng rất khỏe, cảm ơn!' },
+      { id: 'zh-greetings-turn-06', speaker: 'B', text: '回头见！', translationVi: '(Huítóu jiàn!) Hẹn gặp lại!' },
+      { id: 'zh-greetings-turn-07', speaker: 'A', text: '再见！', translationVi: '(Zàijiàn!) Tạm biệt!' },
+      {
+        id: 'zh-greetings-turn-08',
+        speaker: 'B',
+        text: '再见！祝你有美好的一天。',
+        translationVi: '(Zàijiàn! Zhù nǐ yǒu měihǎo de yī tiān.) Tạm biệt! Chúc một ngày tốt lành.',
+      },
+    ],
+    relatedVocabularyIds: ['zh-l1-1-v1', 'zh-l1-1-v3', 'zh-l1-1-v5', 'zh-l1-1-v6', 'zh-l1-2-v1', 'zh-l1-2-v2', 'zh-l1-2-v6'],
+    task: {
+      type: 'choose-reply',
+      promptVi: "Ai đó hỏi bạn '你好吗？'. Bạn trả lời thế nào?",
+      options: [
+        { id: 'o1', text: '我很好，谢谢。你呢？' },
+        { id: 'o2', text: '我叫兰。' },
+        { id: 'o3', text: '回头见。' },
+        { id: 'o4', text: '很高兴认识你。' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "'你好吗？' là câu hỏi thăm sức khỏe, nên trả lời bằng cách nói bạn cảm thấy thế nào.",
+    },
+  },
+  {
+    id: 'zh-conv-introducing-yourself',
+    languageCode: 'zh',
+    level: 'A1',
+    title: '自我介绍',
+    titleVi: 'Giới thiệu bản thân',
+    descriptionVi: 'Luyện hội thoại giới thiệu tên và quê quán khi gặp người mới bằng tiếng Trung.',
+    contextVi: 'Lan gặp một người bạn mới tên An tại lớp học tiếng Trung.',
+    dialogue: [
+      {
+        id: 'zh-intro-yourself-turn-01',
+        speaker: 'A',
+        text: '你好！你叫什么名字？',
+        translationVi: '(Nǐ hǎo! Nǐ jiào shénme míngzi?) Chào! Bạn tên gì?',
+      },
+      {
+        id: 'zh-intro-yourself-turn-02',
+        speaker: 'B',
+        text: '我叫安。很高兴认识你。',
+        translationVi: '(Wǒ jiào Ān. Hěn gāoxìng rènshi nǐ.) Tôi tên là An. Rất vui được biết bạn.',
+      },
+      {
+        id: 'zh-intro-yourself-turn-03',
+        speaker: 'A',
+        text: '我也很高兴认识你。我叫兰。',
+        translationVi: '(Wǒ yě hěn gāoxìng rènshi nǐ. Wǒ jiào Lán.) Tôi cũng rất vui được biết bạn. Tôi là Lan.',
+      },
+      {
+        id: 'zh-intro-yourself-turn-04',
+        speaker: 'B',
+        text: '兰，你从哪里来？',
+        translationVi: '(Lán, nǐ cóng nǎlǐ lái?) Bạn đến từ đâu, Lan?',
+      },
+      {
+        id: 'zh-intro-yourself-turn-05',
+        speaker: 'A',
+        text: '我从河内来。你呢？',
+        translationVi: '(Wǒ cóng Hénèi lái. Nǐ ne?) Tôi đến từ Hà Nội. Còn bạn?',
+      },
+      {
+        id: 'zh-intro-yourself-turn-06',
+        speaker: 'B',
+        text: '我从岘港来。',
+        translationVi: '(Wǒ cóng Xiàngǎng lái.) Tôi đến từ Đà Nẵng.',
+      },
+      {
+        id: 'zh-intro-yourself-turn-07',
+        speaker: 'A',
+        text: '你是学生吗？',
+        translationVi: '(Nǐ shì xuésheng ma?) Bạn có phải là sinh viên không?',
+      },
+      {
+        id: 'zh-intro-yourself-turn-08',
+        speaker: 'B',
+        text: '是，我是学生。',
+        translationVi: '(Shì, wǒ shì xuésheng.) Vâng, tôi là sinh viên.',
+      },
+    ],
+    relatedVocabularyIds: ['zh-l2-1-v3', 'zh-l2-1-v4', 'zh-l2-2-v1', 'zh-l2-2-v2', 'zh-l2-3-v3'],
+    task: {
+      type: 'complete-reply',
+      promptVi: "Hoàn thành câu trả lời phù hợp cho câu hỏi '你叫什么名字？'",
+      options: [
+        { id: 'o1', text: '我叫...' },
+        { id: 'o2', text: '我从...来' },
+        { id: 'o3', text: '回头见。' },
+        { id: 'o4', text: '你好吗？' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "Khi được hỏi tên, trả lời bằng '我叫...' hoặc '我是...'.",
+    },
+  },
+];

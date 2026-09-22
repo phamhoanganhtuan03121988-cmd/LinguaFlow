@@ -20,10 +20,14 @@ export default function LessonScreen() {
   const { t } = useTranslation();
   const [answeredMap, setAnsweredMap] = useState<Record<string, boolean>>({});
 
-  const isComplete = useProgressStore((state) => state.isLessonComplete(lessonId));
-  const markLessonComplete = useProgressStore((state) => state.markLessonComplete);
-
+  // Resolved from the content itself, not the active language — a lesson's
+  // progress always belongs to its own course's language, even if the app's
+  // active language were somehow different when this screen is opened.
   const lesson = getLessonById(lessonId);
+  const languageCode = lesson ? getCourseForLesson(lesson)?.languageCode : undefined;
+
+  const isComplete = useProgressStore((state) => state.isLessonComplete(lessonId, languageCode));
+  const markLessonComplete = useProgressStore((state) => state.markLessonComplete);
 
   if (!lesson) {
     return (
@@ -31,7 +35,7 @@ export default function LessonScreen() {
     );
   }
 
-  const languageCode = getCourseForLesson(lesson)?.languageCode ?? 'en';
+  const resolvedLanguageCode = languageCode ?? 'en';
   const totalExercises = lesson.exercises.length;
   const answeredCount = Object.keys(answeredMap).length;
   const allAnswered = totalExercises === 0 || answeredCount >= totalExercises;
@@ -51,7 +55,7 @@ export default function LessonScreen() {
         <Text style={styles.sectionHeading}>{t('lesson.vocabularyHeading')}</Text>
         <View style={styles.stack}>
           {lesson.vocabulary.map((item) => (
-            <VocabularyCard key={item.id} item={item} languageCode={languageCode} />
+            <VocabularyCard key={item.id} item={item} languageCode={resolvedLanguageCode} />
           ))}
         </View>
       </View>
@@ -60,7 +64,7 @@ export default function LessonScreen() {
         <Text style={styles.sectionHeading}>{t('lesson.sentencesHeading')}</Text>
         <View style={styles.stack}>
           {lesson.sentences.map((sentence) => (
-            <ExampleSentenceCard key={sentence.id} sentence={sentence} languageCode={languageCode} />
+            <ExampleSentenceCard key={sentence.id} sentence={sentence} languageCode={resolvedLanguageCode} />
           ))}
         </View>
       </View>
@@ -100,7 +104,7 @@ export default function LessonScreen() {
               id={item.id}
               term={item.term}
               translationVi={item.translationVi}
-              languageCode={languageCode}
+              languageCode={resolvedLanguageCode}
               audioUrl={item.audioUrl}
             />
           ))}
@@ -119,7 +123,7 @@ export default function LessonScreen() {
         ) : (
           <Button
             label={t('lesson.completeCta')}
-            onPress={() => markLessonComplete(lesson.id)}
+            onPress={() => markLessonComplete(lesson.id, languageCode)}
             disabled={!allAnswered}
           />
         )}

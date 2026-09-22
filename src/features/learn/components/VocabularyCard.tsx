@@ -16,6 +16,7 @@ export function VocabularyCard({ item, languageCode }: VocabularyCardProps) {
       <View style={styles.textColumn}>
         <Text style={styles.term}>{item.term}</Text>
         <Text style={styles.translation}>{item.translationVi}</Text>
+        {item.usageNoteVi ? <Text style={styles.usageNote}>{item.usageNoteVi}</Text> : null}
       </View>
       <SpeakButton
         id={`vocab-${item.id}`}
@@ -51,5 +52,10 @@ const styles = StyleSheet.create({
   translation: {
     ...typography.bodySmall,
     color: colors.textSecondary,
+  },
+  usageNote: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
   },
 });

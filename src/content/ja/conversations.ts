@@ -1,0 +1,133 @@
+import type { ConversationScenario } from '../types';
+
+export const japaneseA1ConversationScenarios: ConversationScenario[] = [
+  {
+    id: 'ja-conv-greetings',
+    languageCode: 'ja',
+    level: 'A1',
+    title: 'あいさつ',
+    titleVi: 'Chào hỏi',
+    descriptionVi: 'Luyện hội thoại chào hỏi cơ bản khi gặp ai đó bằng tiếng Nhật.',
+    contextVi: 'Lan gặp Minh vào buổi sáng trên đường đến trường.',
+    dialogue: [
+      { id: 'ja-greetings-turn-01', speaker: 'A', text: 'こんにちは、ミン！', translationVi: '(Konnichiwa, Min!) Xin chào, Minh!' },
+      {
+        id: 'ja-greetings-turn-02',
+        speaker: 'B',
+        text: 'こんにちは、ラン！おはよう。',
+        translationVi: '(Konnichiwa, Ran! Ohayou.) Chào Lan! Chào buổi sáng.',
+      },
+      {
+        id: 'ja-greetings-turn-03',
+        speaker: 'A',
+        text: '今日はお元気ですか？',
+        translationVi: '(Kyou wa ogenki desu ka?) Hôm nay bạn khỏe không?',
+      },
+      {
+        id: 'ja-greetings-turn-04',
+        speaker: 'B',
+        text: '元気です、ありがとう。あなたは？',
+        translationVi: '(Genki desu, arigatou. Anata wa?) Tôi khỏe, cảm ơn. Còn bạn?',
+      },
+      {
+        id: 'ja-greetings-turn-05',
+        speaker: 'A',
+        text: 'とても元気です、ありがとう！',
+        translationVi: '(Totemo genki desu, arigatou!) Tôi rất khỏe, cảm ơn!',
+      },
+      { id: 'ja-greetings-turn-06', speaker: 'B', text: 'また会いましょう！', translationVi: '(Mata aimashou!) Hẹn gặp lại!' },
+      { id: 'ja-greetings-turn-07', speaker: 'A', text: 'さようなら！', translationVi: '(Sayounara!) Tạm biệt!' },
+      {
+        id: 'ja-greetings-turn-08',
+        speaker: 'B',
+        text: 'さようなら！良い一日を。',
+        translationVi: '(Sayounara! Yoi ichinichi o.) Tạm biệt! Chúc một ngày tốt lành.',
+      },
+    ],
+    relatedVocabularyIds: ['ja-l1-1-v1', 'ja-l1-1-v2', 'ja-l1-1-v6', 'ja-l1-2-v1', 'ja-l1-2-v2', 'ja-l1-2-v6'],
+    task: {
+      type: 'choose-reply',
+      promptVi: "Ai đó hỏi bạn 'お元気ですか？'. Bạn trả lời thế nào?",
+      options: [
+        { id: 'o1', text: '元気です、ありがとう。あなたは？' },
+        { id: 'o2', text: '私の名前はランです。' },
+        { id: 'o3', text: 'また会いましょう。' },
+        { id: 'o4', text: 'はじめまして。' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "'お元気ですか？' là câu hỏi thăm sức khỏe, nên trả lời bằng cách nói bạn cảm thấy thế nào.",
+    },
+  },
+  {
+    id: 'ja-conv-introducing-yourself',
+    languageCode: 'ja',
+    level: 'A1',
+    title: '自己紹介',
+    titleVi: 'Giới thiệu bản thân',
+    descriptionVi: 'Luyện hội thoại giới thiệu tên và quê quán khi gặp người mới bằng tiếng Nhật.',
+    contextVi: 'Lan gặp một người bạn mới tên An tại lớp học tiếng Nhật.',
+    dialogue: [
+      {
+        id: 'ja-intro-yourself-turn-01',
+        speaker: 'A',
+        text: 'こんにちは！お名前は何ですか？',
+        translationVi: '(Konnichiwa! Onamae wa nan desu ka?) Chào! Bạn tên gì?',
+      },
+      {
+        id: 'ja-intro-yourself-turn-02',
+        speaker: 'B',
+        text: '私の名前はアンです。はじめまして。',
+        translationVi: '(Watashi no namae wa An desu. Hajimemashite.) Tên tôi là An. Rất vui được gặp bạn.',
+      },
+      {
+        id: 'ja-intro-yourself-turn-03',
+        speaker: 'A',
+        text: 'こちらこそ、はじめまして。私はランです。',
+        translationVi: '(Kochirakoso, hajimemashite. Watashi wa Ran desu.) Tôi cũng rất vui được gặp bạn. Tôi là Lan.',
+      },
+      {
+        id: 'ja-intro-yourself-turn-04',
+        speaker: 'B',
+        text: 'ランさんはどこから来ましたか？',
+        translationVi: '(Ran-san wa doko kara kimashita ka?) Bạn đến từ đâu, Lan?',
+      },
+      {
+        id: 'ja-intro-yourself-turn-05',
+        speaker: 'A',
+        text: 'ハノイから来ました。あなたは？',
+        translationVi: '(Hanoi kara kimashita. Anata wa?) Tôi đến từ Hà Nội. Còn bạn?',
+      },
+      {
+        id: 'ja-intro-yourself-turn-06',
+        speaker: 'B',
+        text: 'ダナンから来ました。',
+        translationVi: '(Da Nang kara kimashita.) Tôi đến từ Đà Nẵng.',
+      },
+      {
+        id: 'ja-intro-yourself-turn-07',
+        speaker: 'A',
+        text: '学生ですか？',
+        translationVi: '(Gakusei desu ka?) Bạn có phải là sinh viên không?',
+      },
+      {
+        id: 'ja-intro-yourself-turn-08',
+        speaker: 'B',
+        text: 'はい、学生です。',
+        translationVi: '(Hai, gakusei desu.) Vâng, tôi là sinh viên.',
+      },
+    ],
+    relatedVocabularyIds: ['ja-l2-1-v3', 'ja-l2-1-v4', 'ja-l2-2-v1', 'ja-l2-2-v2', 'ja-l2-3-v3'],
+    task: {
+      type: 'complete-reply',
+      promptVi: "Hoàn thành câu trả lời phù hợp cho câu hỏi 'お名前は何ですか？'",
+      options: [
+        { id: 'o1', text: '私の名前は…です' },
+        { id: 'o2', text: '…から来ました' },
+        { id: 'o3', text: 'また会いましょう。' },
+        { id: 'o4', text: 'お元気ですか？' },
+      ],
+      correctOptionId: 'o1',
+      explanationVi: "Khi được hỏi tên, trả lời bằng '私の名前は…です' hoặc '私は…です'.",
+    },
+  },
+];

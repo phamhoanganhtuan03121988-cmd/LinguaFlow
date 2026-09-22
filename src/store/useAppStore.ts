@@ -7,22 +7,45 @@ import type { LearningGoalId } from '@/src/data/goals';
 import type { CurrentLevelId } from '@/src/data/levels';
 import type { PlacementResult } from '@/src/features/placement/scoring';
 
-interface AppState {
-  hasHydrated: boolean;
-  hasCompletedOnboarding: boolean;
-  selectedLanguage: LanguageCode | null;
-  learningGoal: LearningGoalId | null;
+export interface LanguageProfile {
   currentLevel: CurrentLevelId | null;
   /** Most recent placement test result only — retaking overwrites it, no history kept. */
   placementTestResult: PlacementResult | null;
-  setSelectedLanguage: (language: LanguageCode) => void;
+  /** When this language was added — reserved for Learning Hub ordering (Phase 8C). */
+  startedAt: number;
+}
+
+function createEmptyLanguageProfile(): LanguageProfile {
+  return { currentLevel: null, placementTestResult: null, startedAt: Date.now() };
+}
+
+/** Stable reference for "no language" reads, so selectors don't return a fresh object every call. */
+const EMPTY_LANGUAGE_PROFILE: LanguageProfile = createEmptyLanguageProfile();
+
+export interface AppState {
+  hasHydrated: boolean;
+  hasCompletedOnboarding: boolean;
+  /** The language currently driving Home/Learn/Review/Practice. */
+  activeLanguageCode: LanguageCode | null;
+  learningGoal: LearningGoalId | null;
+  /** Single source of truth for per-language profile data (level, placement result). */
+  languages: Partial<Record<LanguageCode, LanguageProfile>>;
+
+  /** Sets the active language, creating its profile entry on first use. */
+  setActiveLanguage: (language: LanguageCode) => void;
   setLearningGoal: (goal: LearningGoalId) => void;
-  setCurrentLevel: (level: CurrentLevelId) => void;
+  setCurrentLevel: (level: CurrentLevelId, languageCode?: LanguageCode) => void;
   completeOnboarding: () => void;
-  resetOnboarding: () => void;
-  setPlacementTestResult: (result: PlacementResult) => void;
+  /** Resets only this store's own state. For a full cross-store factory reset, use resetAllData() from './resetAllData'. */
+  resetAppState: () => void;
+  setPlacementTestResult: (result: PlacementResult, languageCode?: LanguageCode) => void;
   /** Explicit, user-initiated action — the result never changes currentLevel on its own. */
-  applyPlacementRecommendation: () => void;
+  applyPlacementRecommendation: (languageCode?: LanguageCode) => void;
+}
+
+/** Reads a language's profile, falling back to a stable empty default when unset. */
+export function selectLanguageProfile(state: AppState, languageCode: LanguageCode | null): LanguageProfile {
+  return (languageCode && state.languages[languageCode]) || EMPTY_LANGUAGE_PROFILE;
 }
 
 export const useAppStore = create<AppState>()(
@@ -30,41 +53,98 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       hasHydrated: false,
       hasCompletedOnboarding: false,
-      selectedLanguage: null,
+      activeLanguageCode: null,
       learningGoal: null,
-      currentLevel: null,
-      placementTestResult: null,
-      setSelectedLanguage: (language) => set({ selectedLanguage: language }),
+      languages: {},
+
+      setActiveLanguage: (language) => {
+        set((state) => ({
+          activeLanguageCode: language,
+          languages: state.languages[language]
+            ? state.languages
+            : { ...state.languages, [language]: createEmptyLanguageProfile() },
+        }));
+      },
+
       setLearningGoal: (goal) => set({ learningGoal: goal }),
-      setCurrentLevel: (level) => set({ currentLevel: level }),
+
+      setCurrentLevel: (level, languageCode) => {
+        const code = languageCode ?? get().activeLanguageCode;
+        if (!code) return;
+        set((state) => ({
+          languages: {
+            ...state.languages,
+            [code]: { ...(state.languages[code] ?? createEmptyLanguageProfile()), currentLevel: level },
+          },
+        }));
+      },
+
       completeOnboarding: () => set({ hasCompletedOnboarding: true }),
-      resetOnboarding: () =>
-        set({
-          hasCompletedOnboarding: false,
-          selectedLanguage: null,
-          learningGoal: null,
-          currentLevel: null,
-          placementTestResult: null,
-        }),
-      setPlacementTestResult: (result) => set({ placementTestResult: result }),
-      applyPlacementRecommendation: () => {
-        const result = get().placementTestResult;
+
+      resetAppState: () => {
+        set({ hasCompletedOnboarding: false, activeLanguageCode: null, learningGoal: null, languages: {} });
+      },
+
+      setPlacementTestResult: (result, languageCode) => {
+        const code = languageCode ?? get().activeLanguageCode;
+        if (!code) return;
+        set((state) => ({
+          languages: {
+            ...state.languages,
+            [code]: { ...(state.languages[code] ?? createEmptyLanguageProfile()), placementTestResult: result },
+          },
+        }));
+      },
+
+      applyPlacementRecommendation: (languageCode) => {
+        const code = languageCode ?? get().activeLanguageCode;
+        if (!code) return;
+        const result = get().languages[code]?.placementTestResult;
         if (!result) return;
-        set({ currentLevel: result.recommendedLevel });
+        get().setCurrentLevel(result.recommendedLevel, code);
       },
     }),
     {
       name: 'linguaflow-app-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: (persistedState: unknown, version) => {
+        if (version >= 1) return persistedState;
+        // Pre-Phase-8 shape (the only shape ever shipped to real users — Phase 8A's
+        // intermediate `selectedLanguage`-named shape was never deployed, so this
+        // migrates straight from the original flat fields to the final 8B shape).
+        const old = (persistedState ?? {}) as {
+          hasCompletedOnboarding?: boolean;
+          selectedLanguage?: LanguageCode | null;
+          learningGoal?: LearningGoalId | null;
+          currentLevel?: CurrentLevelId | null;
+          placementTestResult?: PlacementResult | null;
+        };
+        const activeLanguageCode = old.selectedLanguage ?? null;
+        const languages: AppState['languages'] = activeLanguageCode
+          ? {
+              [activeLanguageCode]: {
+                currentLevel: old.currentLevel ?? null,
+                placementTestResult: old.placementTestResult ?? null,
+                startedAt: Date.now(),
+              },
+            }
+          : {};
+        return {
+          hasCompletedOnboarding: old.hasCompletedOnboarding ?? false,
+          activeLanguageCode,
+          learningGoal: old.learningGoal ?? null,
+          languages,
+        };
+      },
       onRehydrateStorage: () => () => {
         useAppStore.setState({ hasHydrated: true });
       },
       partialize: (state) => ({
         hasCompletedOnboarding: state.hasCompletedOnboarding,
-        selectedLanguage: state.selectedLanguage,
+        activeLanguageCode: state.activeLanguageCode,
         learningGoal: state.learningGoal,
-        currentLevel: state.currentLevel,
-        placementTestResult: state.placementTestResult,
+        languages: state.languages,
       }),
     },
   ),

@@ -16,8 +16,8 @@ import {
 } from '@/src/features/review/reviewPool';
 import type { SrsRating } from '@/src/features/review/srs';
 import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
-import { XP_REWARDS, useReviewStore } from '@/src/store/useReviewStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
+import { XP_REWARDS, selectLanguageReview, useReviewStore } from '@/src/store/useReviewStore';
 import { colors, spacing, typography } from '@/src/theme';
 
 /** How many cards later a "Chưa nhớ" word reappears within the same session. */
@@ -26,14 +26,17 @@ const REQUEUE_OFFSET = 3;
 export default function ReviewSessionScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
-  const wordStates = useReviewStore((state) => state.wordStates);
+  // Captured once at session build time so the whole session (including every
+  // recordReview/completeSession call below) stays targeted at the language it
+  // was actually built for, even if activeLanguageCode were to change mid-session.
+  const [sessionLanguageCode] = useState(() => useAppStore.getState().activeLanguageCode);
+  const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, sessionLanguageCode));
+  const { wordStates } = useReviewStore((state) => selectLanguageReview(state, sessionLanguageCode));
   const recordReview = useReviewStore((state) => state.recordReview);
   const completeSession = useReviewStore((state) => state.completeSession);
 
   const [initialSession] = useState<ReviewableWord[]>(() => {
-    const course = getCourseForLanguage(selectedLanguage);
+    const course = getCourseForLanguage(sessionLanguageCode);
     if (!course) return [];
     const words = getReviewableWordsForCourse(course, completedLessonIds);
     const { due, newWords } = partitionWordsByStatus(words, wordStates);
@@ -57,14 +60,14 @@ export default function ReviewSessionScreen() {
 
   useEffect(() => {
     if (isFinished && !hasFiredCompletion) {
-      completeSession(initialSession.length);
+      completeSession(initialSession.length, sessionLanguageCode ?? undefined);
       setHasFiredCompletion(true);
     }
-  }, [isFinished, hasFiredCompletion, initialSession.length, completeSession]);
+  }, [isFinished, hasFiredCompletion, initialSession.length, completeSession, sessionLanguageCode]);
 
   const handleRate = (rating: SrsRating) => {
     if (!currentWord) return;
-    recordReview(currentWord.vocabulary.id, rating);
+    recordReview(currentWord.vocabulary.id, rating, sessionLanguageCode ?? undefined);
     setSessionXp((xp) => xp + XP_REWARDS[rating]);
 
     setQueue((previous) => {

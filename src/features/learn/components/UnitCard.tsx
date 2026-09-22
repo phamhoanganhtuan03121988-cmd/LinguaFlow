@@ -3,21 +3,23 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card, ProgressBar } from '@/src/components/ui';
 import type { Unit } from '@/src/content/types';
+import type { TimelineStatus } from '@/src/features/learn/courseProgress';
 import { colors, spacing, typography } from '@/src/theme';
 
 interface Props {
   unit: Unit;
   completedCount: number;
   totalCount: number;
+  status: TimelineStatus;
   onPress: () => void;
 }
 
-export function UnitCard({ unit, completedCount, totalCount, onPress }: Props) {
+export function UnitCard({ unit, completedCount, totalCount, status, onPress }: Props) {
   const { t } = useTranslation();
 
   return (
     <Pressable onPress={onPress}>
-      <Card style={styles.card}>
+      <Card style={[styles.card, status === 'current' && styles.cardCurrent]}>
         <Text style={styles.title}>{unit.titleVi}</Text>
         <Text style={styles.description}>{unit.descriptionVi}</Text>
         <View style={styles.progressRow}>
@@ -36,6 +38,10 @@ export function UnitCard({ unit, completedCount, totalCount, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     gap: spacing.xs,
+  },
+  cardCurrent: {
+    borderWidth: 1.5,
+    borderColor: colors.primary,
   },
   title: {
     ...typography.h3,

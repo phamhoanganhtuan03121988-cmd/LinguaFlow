@@ -8,19 +8,20 @@ import { getLanguageByCode } from '@/src/data/languages';
 import { getReviewableWordsForCourse, partitionWordsByStatus } from '@/src/features/review/reviewPool';
 import { getReviewStats } from '@/src/features/review/reviewStats';
 import { useAppStore } from '@/src/store/useAppStore';
-import { useProgressStore } from '@/src/store/useProgressStore';
-import { useReviewStore } from '@/src/store/useReviewStore';
+import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
+import { selectLanguageReview, useReviewStore } from '@/src/store/useReviewStore';
 import { colors, spacing, typography } from '@/src/theme';
 
 export default function ReviewScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const selectedLanguage = useAppStore((state) => state.selectedLanguage);
-  const completedLessonIds = useProgressStore((state) => state.completedLessonIds);
-  const wordStates = useReviewStore((state) => state.wordStates);
-  const totalReviewSessionsCompleted = useReviewStore((state) => state.totalReviewSessionsCompleted);
+  const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
+  const { wordStates, totalReviewSessionsCompleted } = useReviewStore((state) =>
+    selectLanguageReview(state, activeLanguageCode),
+  );
 
-  if (!selectedLanguage) {
+  if (!activeLanguageCode) {
     return (
       <EmptyState
         icon="flag-outline"
@@ -32,10 +33,10 @@ export default function ReviewScreen() {
     );
   }
 
-  const course = getCourseForLanguage(selectedLanguage);
+  const course = getCourseForLanguage(activeLanguageCode);
 
   if (!course) {
-    const language = getLanguageByCode(selectedLanguage);
+    const language = getLanguageByCode(activeLanguageCode);
     const languageLabel = language ? t(`onboarding.language.options.${language.code}.label`) : '';
 
     return (
