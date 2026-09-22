@@ -1,4 +1,5 @@
 import type { CurrentLevelId } from '@/src/data/levels';
+import type { LanguageCode } from '@/src/data/languages';
 import type { PlacementSkill, PlacementTest } from '@/src/content/types';
 
 export interface PlacementSkillScore {
@@ -16,11 +17,33 @@ export interface PlacementResult {
   completedAt: number;
 }
 
-/** First lesson of the unit each recommended level maps to — verified against src/content/en/units.ts. */
-const RECOMMENDED_LESSON_BY_LEVEL: Record<CurrentLevelId, string> = {
-  beginner: 'l1-1-basic-greetings',
-  elementary: 'l2-1-whats-your-name',
-  intermediate: 'l3-1-family-members',
+/**
+ * First lesson of the unit each recommended level maps to, per language —
+ * verified against each src/content/{lang}/units.ts. Every language pack
+ * shares the same 3-unit A1 shape (greetings/introductions/family), so this
+ * table only needs one row per language, not per level per language pack.
+ */
+const RECOMMENDED_LESSON_BY_LEVEL: Record<LanguageCode, Record<CurrentLevelId, string>> = {
+  en: {
+    beginner: 'l1-1-basic-greetings',
+    elementary: 'l2-1-whats-your-name',
+    intermediate: 'l3-1-family-members',
+  },
+  ko: {
+    beginner: 'ko-l1-1-basic-greetings',
+    elementary: 'ko-l2-1-whats-your-name',
+    intermediate: 'ko-l3-1-family-members',
+  },
+  zh: {
+    beginner: 'zh-l1-1-basic-greetings',
+    elementary: 'zh-l2-1-whats-your-name',
+    intermediate: 'zh-l3-1-family-members',
+  },
+  ja: {
+    beginner: 'ja-l1-1-basic-greetings',
+    elementary: 'ja-l2-1-whats-your-name',
+    intermediate: 'ja-l3-1-family-members',
+  },
 };
 
 /**
@@ -68,7 +91,7 @@ export function scorePlacementTest(test: PlacementTest, answers: Record<string, 
     totalQuestions,
     skillScores,
     recommendedLevel,
-    recommendedLessonId: RECOMMENDED_LESSON_BY_LEVEL[recommendedLevel],
+    recommendedLessonId: RECOMMENDED_LESSON_BY_LEVEL[test.languageCode][recommendedLevel],
     completedAt: Date.now(),
   };
 }

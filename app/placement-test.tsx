@@ -91,7 +91,7 @@ export default function PlacementTestScreen() {
       <ScreenContainer maxWidth={480}>
         <Text style={styles.title}>{t('placement.resultTitle')}</Text>
         <View style={styles.resultCardSpacing}>
-          <PlacementResultCard result={result} />
+          <PlacementResultCard result={result} languageCode={test.languageCode} />
         </View>
         <View style={styles.footer}>
           {applied ? (

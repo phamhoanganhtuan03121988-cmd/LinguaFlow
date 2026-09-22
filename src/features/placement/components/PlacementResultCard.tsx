@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/src/components/ui';
 import { getLessonById } from '@/src/content/loader';
 import type { PlacementSkill } from '@/src/content/types';
+import type { LanguageCode } from '@/src/data/languages';
 import type { PlacementResult } from '@/src/features/placement/scoring';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
@@ -11,11 +12,13 @@ const SKILLS: PlacementSkill[] = ['vocabulary', 'grammar', 'reading', 'listening
 
 interface PlacementResultCardProps {
   result: PlacementResult;
+  /** The language this result was taken in — resolves recommendedLessonId unambiguously via the composite-key lookup, same principle as every other content-anchored screen. */
+  languageCode: LanguageCode;
 }
 
-export function PlacementResultCard({ result }: PlacementResultCardProps) {
+export function PlacementResultCard({ result, languageCode }: PlacementResultCardProps) {
   const { t } = useTranslation();
-  const lesson = getLessonById(result.recommendedLessonId);
+  const lesson = getLessonById(result.recommendedLessonId, languageCode);
 
   return (
     <Card style={styles.card}>

@@ -6,12 +6,13 @@ import { chineseIntroductionsLessons } from './lessons/introductions';
 import { chineseFamilyLessons } from './lessons/family';
 import { chineseA1GrammarTopics } from './grammar';
 import { chineseA1ConversationScenarios } from './conversations';
+import { chineseA1PlacementTest } from './placementTest';
 
-/** No placementTest yet — see src/content/ko/index.ts for the reasoning. */
 export const chineseA1Pack: ContentPack = {
   course: chineseA1Course,
   units: chineseA1Units,
   lessons: [...chineseGreetingsLessons, ...chineseIntroductionsLessons, ...chineseFamilyLessons],
   grammarTopics: chineseA1GrammarTopics,
   conversationScenarios: chineseA1ConversationScenarios,
+  placementTest: chineseA1PlacementTest,
 };
