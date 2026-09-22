@@ -11,11 +11,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import '@/src/i18n';
 import { usePwaHead, useWebViewportHeightFix } from '@/src/features/web/usePwaHead';
+import { useTabBarDebugOverlay } from '@/src/features/web/useTabBarDebugOverlay';
 import { colors } from '@/src/theme';
 
 export default function RootLayout() {
   usePwaHead();
   useWebViewportHeightFix();
+  useTabBarDebugOverlay(); // TEMPORARY — remove once tab bar crop fix is confirmed
 
   const [fontsLoaded] = useFonts({
     BeVietnamPro_400Regular,

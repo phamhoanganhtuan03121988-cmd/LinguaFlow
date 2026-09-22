@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 import { colors, fontFamily } from '@/src/theme';
 
@@ -28,6 +29,12 @@ export default function TabsLayout() {
           borderTopColor: colors.border,
           backgroundColor: colors.surface,
           paddingTop: 6,
+          // Web has no safe-area-inset-bottom to pad the bar out with (no
+          // viewport-fit=cover), so the default 49px UIKit height minus our
+          // paddingTop leaves less room than the icon (28px) + label actually
+          // need, overflowing the box and getting clipped by body's overflow:
+          // hidden. Native gets plenty of slack from the home-indicator inset.
+          ...(Platform.OS === 'web' ? { height: 64 } : null),
         },
         tabBarLabelStyle: {
           fontFamily: fontFamily.medium,
