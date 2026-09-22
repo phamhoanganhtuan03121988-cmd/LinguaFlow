@@ -10,11 +10,12 @@ import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import '@/src/i18n';
-import { usePwaHead } from '@/src/features/web/usePwaHead';
+import { usePwaHead, useWebViewportHeightFix } from '@/src/features/web/usePwaHead';
 import { colors } from '@/src/theme';
 
 export default function RootLayout() {
   usePwaHead();
+  useWebViewportHeightFix();
 
   const [fontsLoaded] = useFonts({
     BeVietnamPro_400Regular,

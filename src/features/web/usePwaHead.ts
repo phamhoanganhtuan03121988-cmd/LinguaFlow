@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Platform } from 'react-native';
 
 import { colors } from '@/src/theme';
@@ -33,6 +33,31 @@ export function usePwaHead(): void {
       manifestLink.remove();
       themeColorMeta.remove();
       appleCapableMeta.remove();
+    };
+  }, []);
+}
+
+/**
+ * Mobile Safari sizes `html, body { height: 100% }` (set by Expo's generated
+ * index.html) against the "large" viewport, as if its collapsible toolbar were
+ * already hidden. When the toolbar is visible, the real visible area is smaller
+ * by its height, and since that stylesheet also sets `body { overflow: hidden }`,
+ * the difference gets clipped instead of scrolled — cutting off whatever sits at
+ * the very bottom of the page, e.g. the bottom tab bar's labels. `dvh` tracks the
+ * actually-visible viewport instead of the large one. Browsers that don't support
+ * it treat the declaration as invalid and ignore it, falling back to the 100%
+ * already set by index.html — so this is safe with no feature-detection needed.
+ */
+export function useWebViewportHeightFix(): void {
+  useLayoutEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    const style = document.createElement('style');
+    style.textContent = 'html, body { height: 100dvh !important; }';
+    document.head.appendChild(style);
+
+    return () => {
+      style.remove();
     };
   }, []);
 }
