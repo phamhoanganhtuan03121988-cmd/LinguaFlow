@@ -1,6 +1,7 @@
+import type { CEFRLevel } from '@/src/content/types';
 import type { CurrentLevelId } from '@/src/data/levels';
 import type { LanguageCode } from '@/src/data/languages';
-import { getCourseForLanguage, getUnitById, getUnitsForCourse } from '@/src/content/loader';
+import { getCourseForLanguage, getCourseLevelsForLanguage, getUnitById, getUnitsForCourse } from '@/src/content/loader';
 import { getCourseProgress, getNextLessonForCourse } from '@/src/features/learn/courseProgress';
 
 export type LanguageHubStatus = 'not-started' | 'in-progress' | 'completed' | 'no-content';
@@ -8,7 +9,14 @@ export type LanguageHubStatus = 'not-started' | 'in-progress' | 'completed' | 'n
 export interface LanguageHubEntry {
   code: LanguageCode;
   status: LanguageHubStatus;
+  /** The Phase 7 placement-derived proficiency tier (beginner/elementary/intermediate) — unrelated to activeLevel, see useAppStore.LanguageProfile. */
   level: CurrentLevelId | null;
+  /** Which CEFR course level (A1/A2/...) this entry describes — the language's activeLevel. */
+  activeLevel: CEFRLevel;
+  /** Every CEFR level with registered content for this language, ascending. */
+  availableLevels: CEFRLevel[];
+  /** True once activeLevel is fully completed AND a next level exists in availableLevels — never auto-switches, only signals the "Bắt đầu A2" CTA should show. */
+  nextLevel: CEFRLevel | null;
   completedCount: number;
   totalCount: number;
   progressRatio: number;
@@ -24,16 +32,21 @@ export interface LanguageHubEntry {
 export function getLanguageHubEntry(
   code: LanguageCode,
   level: CurrentLevelId | null,
+  activeLevel: CEFRLevel,
   completedLessonIds: Record<string, true>,
   lastStudiedAt: number | null,
 ): LanguageHubEntry {
-  const course = getCourseForLanguage(code);
+  const availableLevels = getCourseLevelsForLanguage(code);
+  const course = getCourseForLanguage(code, activeLevel);
 
   if (!course) {
     return {
       code,
       status: 'no-content',
       level,
+      activeLevel,
+      availableLevels,
+      nextLevel: null,
       completedCount: 0,
       totalCount: 0,
       progressRatio: 0,
@@ -53,10 +66,16 @@ export function getLanguageHubEntry(
   const status: LanguageHubStatus =
     totalCount > 0 && completedCount === totalCount ? 'completed' : completedCount > 0 ? 'in-progress' : 'not-started';
 
+  const nextLevel =
+    status === 'completed' ? availableLevels[availableLevels.indexOf(activeLevel) + 1] ?? null : null;
+
   return {
     code,
     status,
     level,
+    activeLevel,
+    availableLevels,
+    nextLevel,
     completedCount,
     totalCount,
     progressRatio: totalCount > 0 ? completedCount / totalCount : 0,

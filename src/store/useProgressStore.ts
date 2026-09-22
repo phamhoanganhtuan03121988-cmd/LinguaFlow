@@ -13,7 +13,9 @@ export interface LanguageProgress {
   totalListeningSessionsCompleted: number;
   completedGrammarTopicIds: Record<string, true>;
   completedConversationScenarioIds: Record<string, true>;
-  /** Set whenever recordActivity() fires for this language — separate from the global streak's lastActiveDate. */
+  /** Writing Practice completions (Phase 9) — a round marked "done", never a correctness score. See src/features/writing. */
+  completedWritingItemIds: Record<string, true>;
+  /** Set whenever recordActivity() fires for this language — separate from the global streak's lastActiveDate. Also doubles as "last writing activity" since writing completion calls recordActivity() too. */
   lastStudiedAt: number | null;
 }
 
@@ -24,6 +26,7 @@ function createEmptyLanguageProgress(): LanguageProgress {
     totalListeningSessionsCompleted: 0,
     completedGrammarTopicIds: {},
     completedConversationScenarioIds: {},
+    completedWritingItemIds: {},
     lastStudiedAt: null,
   };
 }
@@ -36,7 +39,7 @@ export interface ProgressState {
   /** Global — a whole-account "did I study anything today" streak, not per-language. See Phase 8 proposal. */
   lastActiveDate: string | null;
   currentStreakDays: number;
-  /** Single source of truth for per-language lesson/grammar/conversation/speaking/listening progress. */
+  /** Single source of truth for per-language lesson/grammar/conversation/speaking/listening/writing progress. */
   languages: Partial<Record<LanguageCode, LanguageProgress>>;
 
   markLessonComplete: (lessonId: string, languageCode?: LanguageCode) => void;
@@ -48,6 +51,9 @@ export interface ProgressState {
   isGrammarTopicComplete: (id: string, languageCode?: LanguageCode) => boolean;
   markConversationScenarioComplete: (id: string, languageCode?: LanguageCode) => void;
   isConversationScenarioComplete: (id: string, languageCode?: LanguageCode) => boolean;
+  /** Marks one writing round "done" — never a correctness/handwriting score (Phase 9 explicitly forbids fake grading). Does not touch lesson/SRS/speaking progress. */
+  markWritingItemComplete: (id: string, languageCode?: LanguageCode) => void;
+  isWritingItemComplete: (id: string, languageCode?: LanguageCode) => boolean;
   /** Call only when the learner actually completes something (lesson, session, topic, scenario) — never on views/plays/flips. Bumps the global streak, and that language's lastStudiedAt when resolvable. */
   recordActivity: (languageCode?: LanguageCode) => void;
   /** Wipes every language's progress. Used by resetAllData()'s full factory reset. */
@@ -155,6 +161,23 @@ export const useProgressStore = create<ProgressState>()(
         return Boolean(get().languages[code]?.completedConversationScenarioIds[id]);
       },
 
+      markWritingItemComplete: (id, languageCode) => {
+        const code = languageCode ?? useAppStore.getState().activeLanguageCode;
+        if (!code) return;
+        set((state) => ({
+          languages: updateLanguageSlice(state.languages, code, {
+            completedWritingItemIds: { ...(state.languages[code]?.completedWritingItemIds ?? {}), [id]: true },
+          }),
+        }));
+        // Same precedent as markSpeakingPracticed: a supplementary practice
+        // activity, not a lesson/session completion, so it doesn't bump the streak.
+      },
+      isWritingItemComplete: (id, languageCode) => {
+        const code = languageCode ?? useAppStore.getState().activeLanguageCode;
+        if (!code) return false;
+        return Boolean(get().languages[code]?.completedWritingItemIds[id]);
+      },
+
       recordActivity: (languageCode) => {
         set((state) => computeNextStreak({ lastActiveDate: state.lastActiveDate, currentStreakDays: state.currentStreakDays }));
 
@@ -172,10 +195,9 @@ export const useProgressStore = create<ProgressState>()(
     {
       name: 'linguaflow-progress-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown, version) => {
-        if (version >= 1) return persistedState;
-        const old = (persistedState ?? {}) as {
+        let state = persistedState as {
           completedLessonIds?: Record<string, true>;
           practicedSpeakingIds?: Record<string, true>;
           totalListeningSessionsCompleted?: number;
@@ -183,34 +205,66 @@ export const useProgressStore = create<ProgressState>()(
           completedConversationScenarioIds?: Record<string, true>;
           lastActiveDate?: string | null;
           currentStreakDays?: number;
-        };
-        // Only 'en' content has ever existed in CONTENT_PACKS, so any legacy
-        // progress data is provably English — no cross-store read needed.
-        const hasLegacyData =
-          Object.keys(old.completedLessonIds ?? {}).length > 0 ||
-          Object.keys(old.practicedSpeakingIds ?? {}).length > 0 ||
-          (old.totalListeningSessionsCompleted ?? 0) > 0 ||
-          Object.keys(old.completedGrammarTopicIds ?? {}).length > 0 ||
-          Object.keys(old.completedConversationScenarioIds ?? {}).length > 0;
+          languages?: Record<string, Partial<LanguageProgress> | undefined>;
+        } | null;
 
-        const languages: ProgressState['languages'] = hasLegacyData
-          ? {
-              en: {
-                completedLessonIds: old.completedLessonIds ?? {},
-                practicedSpeakingIds: old.practicedSpeakingIds ?? {},
-                totalListeningSessionsCompleted: old.totalListeningSessionsCompleted ?? 0,
-                completedGrammarTopicIds: old.completedGrammarTopicIds ?? {},
-                completedConversationScenarioIds: old.completedConversationScenarioIds ?? {},
-                lastStudiedAt: null,
-              },
-            }
-          : {};
+        if (version < 1) {
+          // Only 'en' content has ever existed in CONTENT_PACKS at that point, so
+          // any legacy progress data is provably English — no cross-store read needed.
+          const old = state ?? {};
+          const hasLegacyData =
+            Object.keys(old.completedLessonIds ?? {}).length > 0 ||
+            Object.keys(old.practicedSpeakingIds ?? {}).length > 0 ||
+            (old.totalListeningSessionsCompleted ?? 0) > 0 ||
+            Object.keys(old.completedGrammarTopicIds ?? {}).length > 0 ||
+            Object.keys(old.completedConversationScenarioIds ?? {}).length > 0;
 
-        return {
-          lastActiveDate: old.lastActiveDate ?? null,
-          currentStreakDays: old.currentStreakDays ?? 0,
-          languages,
-        };
+          const languages: Record<string, Partial<LanguageProgress>> = hasLegacyData
+            ? {
+                en: {
+                  completedLessonIds: old.completedLessonIds ?? {},
+                  practicedSpeakingIds: old.practicedSpeakingIds ?? {},
+                  totalListeningSessionsCompleted: old.totalListeningSessionsCompleted ?? 0,
+                  completedGrammarTopicIds: old.completedGrammarTopicIds ?? {},
+                  completedConversationScenarioIds: old.completedConversationScenarioIds ?? {},
+                  lastStudiedAt: null,
+                },
+              }
+            : {};
+
+          state = {
+            lastActiveDate: old.lastActiveDate ?? null,
+            currentStreakDays: old.currentStreakDays ?? 0,
+            languages,
+          };
+        }
+
+        if (version < 2) {
+          // Phase 9: backfill completedWritingItemIds: {} onto every existing
+          // per-language slice — writing tracking is new, there's no prior data to
+          // recover, an empty map is the only correct starting value.
+          const old = state ?? { languages: {} };
+          const languages: ProgressState['languages'] = {};
+          for (const [code, progress] of Object.entries(old.languages ?? {})) {
+            if (!progress) continue;
+            languages[code as LanguageCode] = {
+              completedLessonIds: progress.completedLessonIds ?? {},
+              practicedSpeakingIds: progress.practicedSpeakingIds ?? {},
+              totalListeningSessionsCompleted: progress.totalListeningSessionsCompleted ?? 0,
+              completedGrammarTopicIds: progress.completedGrammarTopicIds ?? {},
+              completedConversationScenarioIds: progress.completedConversationScenarioIds ?? {},
+              completedWritingItemIds: progress.completedWritingItemIds ?? {},
+              lastStudiedAt: progress.lastStudiedAt ?? null,
+            };
+          }
+          state = {
+            lastActiveDate: old.lastActiveDate ?? null,
+            currentStreakDays: old.currentStreakDays ?? 0,
+            languages,
+          };
+        }
+
+        return state;
       },
       onRehydrateStorage: () => () => {
         useProgressStore.setState({ hasHydrated: true });

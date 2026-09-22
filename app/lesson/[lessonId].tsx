@@ -5,12 +5,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Card, ProgressTopBar, ScreenContainer } from '@/src/components/ui';
-import { getCourseForLesson, getLessonById } from '@/src/content/loader';
+import { getCourseForLesson, getLessonById, getWritingItemsForLesson } from '@/src/content/loader';
 import { ExampleSentenceCard } from '@/src/features/learn/components/ExampleSentenceCard';
 import { ExerciseRenderer } from '@/src/features/learn/components/ExerciseRenderer';
 import { VocabularyCard } from '@/src/features/learn/components/VocabularyCard';
 import { ShadowingItemCard } from '@/src/features/shadowing/components/ShadowingItemCard';
 import { PlaceholderScreen } from '@/src/features/tabs/PlaceholderScreen';
+import { WritingItemCard } from '@/src/features/writing/components/WritingItemCard';
 import { useProgressStore } from '@/src/store/useProgressStore';
 import { colors, spacing, typography } from '@/src/theme';
 
@@ -28,6 +29,8 @@ export default function LessonScreen() {
 
   const isComplete = useProgressStore((state) => state.isLessonComplete(lessonId, languageCode));
   const markLessonComplete = useProgressStore((state) => state.markLessonComplete);
+  const isWritingItemComplete = useProgressStore((state) => state.isWritingItemComplete);
+  const writingItems = getWritingItemsForLesson(lessonId);
 
   if (!lesson) {
     return (
@@ -110,6 +113,22 @@ export default function LessonScreen() {
           ))}
         </View>
       </View>
+
+      {writingItems.length > 0 ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionHeading}>{t('writing.lessonSectionHeading')}</Text>
+          <View style={styles.stack}>
+            {writingItems.map((item) => (
+              <WritingItemCard
+                key={item.id}
+                item={item}
+                isComplete={isWritingItemComplete(item.id, languageCode)}
+                onPress={() => router.push(`/writing-session?lessonId=${lesson.id}`)}
+              />
+            ))}
+          </View>
+        </View>
+      ) : null}
 
       <View style={styles.footer}>
         {isComplete ? (

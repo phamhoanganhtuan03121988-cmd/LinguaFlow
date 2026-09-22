@@ -1,6 +1,7 @@
 import type { LanguageCode } from '@/src/data/languages';
 import { CONTENT_PACKS } from './index';
 import type {
+  CEFRLevel,
   ConversationScenario,
   Course,
   ExampleSentence,
@@ -9,25 +10,39 @@ import type {
   PlacementTest,
   Unit,
   VocabularyItem,
+  WritingItem,
 } from './types';
 
 /**
- * Content ids (unit/lesson/grammar/conversation) are authored per-language-pack
- * and are NOT guaranteed unique across packs (e.g. an "en" and a "zh" pack could
- * both use "u1-greetings"). The composite-key maps below are the safe lookup path
- * for any caller that knows which language it's resolving for — used internally
- * whenever we already have a Course/Unit in hand, so the whole course -> units ->
- * lessons chain resolves correctly even if ids collide across packs.
+ * Content ids (unit/lesson/grammar/conversation/writing) are authored per
+ * content pack (one pack per language+level) and are NOT guaranteed unique
+ * across packs unless every pack follows the id-prefixing convention: A1 ids
+ * stay as originally authored (e.g. "ko-l1-1-..."), A2 ids get an extra
+ * "-a2-" segment (e.g. "ko-a2-l1-1-..."). The composite-key maps below are
+ * the safe lookup path for any caller that knows which language it's
+ * resolving for — used internally whenever we already have a Course/Unit in
+ * hand, so the whole course -> units -> lessons chain resolves correctly
+ * even if ids ever collide across packs. Levels don't need their own key
+ * dimension here: the id string itself already encodes the level via that
+ * prefix convention, so this mechanism is unchanged from Phase 8A.
  *
- * The flat `*ById` maps below exist only for backward compatibility with callers
- * that have no language context (e.g. a bare `[lessonId]` route param). They are
- * "first pack registered wins" and guarded: a real id collision across packs
- * throws in dev (never silently shadows one language's content with another's)
- * and logs an error in production rather than crashing a shipped build.
+ * The flat `*ById` maps below exist only for backward compatibility with
+ * callers that have no language context (e.g. a bare `[lessonId]` route
+ * param). They are "first pack registered wins" and guarded: a real id
+ * collision across packs throws in dev (never silently shadows one pack's
+ * content with another's) and logs an error in production rather than
+ * crashing a shipped build.
  */
 function compositeKey(languageCode: LanguageCode, id: string): string {
   return `${languageCode}::${id}`;
 }
+
+/** Key for the per-(language, level) registries below — e.g. "ko::A2". */
+function levelKey(languageCode: LanguageCode, level: CEFRLevel): string {
+  return `${languageCode}::${level}`;
+}
+
+const LEVEL_ORDER: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
 function registerWithCollisionGuard<T>(
   flatMap: Map<string, T>,
@@ -38,9 +53,9 @@ function registerWithCollisionGuard<T>(
 ): void {
   if (flatMap.has(id)) {
     const message =
-      `[content] Duplicate ${kind} id "${id}" — already registered by another language pack before "${languageCode}". ` +
-      `Content ids must be unique across language packs unless every caller resolving this id passes languageCode ` +
-      `explicitly. Rename this id in the "${languageCode}" pack.`;
+      `[content] Duplicate ${kind} id "${id}" — already registered by another content pack before "${languageCode}". ` +
+      `Content ids must be unique across every pack unless every caller resolving this id passes languageCode ` +
+      `explicitly. Rename this id (A2 packs must use the "-a2-" id segment convention).`;
     if (__DEV__) {
       throw new Error(message);
     }
@@ -51,7 +66,10 @@ function registerWithCollisionGuard<T>(
 }
 
 const coursesById = new Map<string, Course>();
-const courseByLanguage = new Map<LanguageCode, Course>();
+/** Default ("lowest level available") course per language — backward-compatible with pre-Phase-9 callers that don't pass a level. */
+const defaultCourseByLanguage = new Map<LanguageCode, Course>();
+const coursesByLanguageLevel = new Map<string, Course>();
+const courseLevelsByLanguage = new Map<LanguageCode, CEFRLevel[]>();
 
 const unitsById = new Map<string, Unit>();
 const unitsByCompositeKey = new Map<string, Unit>();
@@ -61,46 +79,73 @@ const lessonsByCompositeKey = new Map<string, Lesson>();
 
 const grammarTopicsById = new Map<string, GrammarTopic>();
 const grammarTopicsByCompositeKey = new Map<string, GrammarTopic>();
-const grammarTopicsByLanguage = new Map<LanguageCode, GrammarTopic[]>();
+const grammarTopicsByLanguageLevel = new Map<string, GrammarTopic[]>();
 
 const conversationScenariosById = new Map<string, ConversationScenario>();
 const conversationScenariosByCompositeKey = new Map<string, ConversationScenario>();
-const conversationScenariosByLanguage = new Map<LanguageCode, ConversationScenario[]>();
+const conversationScenariosByLanguageLevel = new Map<string, ConversationScenario[]>();
 
-const placementTestByLanguage = new Map<LanguageCode, PlacementTest>();
+const placementTestByLanguageLevel = new Map<string, PlacementTest>();
 
-for (const pack of Object.values(CONTENT_PACKS)) {
-  if (!pack) continue;
-  const languageCode = pack.course.languageCode;
+const writingItemsById = new Map<string, WritingItem>();
+const writingItemsByCompositeKey = new Map<string, WritingItem>();
+const writingItemsByLanguage = new Map<LanguageCode, WritingItem[]>();
+const writingItemsByLessonId = new Map<string, WritingItem[]>();
 
-  coursesById.set(pack.course.id, pack.course);
-  courseByLanguage.set(languageCode, pack.course);
+for (const packs of Object.values(CONTENT_PACKS)) {
+  if (!packs) continue;
+  for (const pack of packs) {
+    const languageCode = pack.course.languageCode;
+    const level = pack.course.level;
 
-  for (const unit of pack.units) {
-    unitsByCompositeKey.set(compositeKey(languageCode, unit.id), unit);
-    registerWithCollisionGuard(unitsById, unit.id, unit, 'unit', languageCode);
-  }
-  for (const lesson of pack.lessons) {
-    lessonsByCompositeKey.set(compositeKey(languageCode, lesson.id), lesson);
-    registerWithCollisionGuard(lessonsById, lesson.id, lesson, 'lesson', languageCode);
-  }
+    coursesById.set(pack.course.id, pack.course);
+    coursesByLanguageLevel.set(levelKey(languageCode, level), pack.course);
 
-  const grammarTopics = pack.grammarTopics ?? [];
-  grammarTopicsByLanguage.set(languageCode, grammarTopics);
-  for (const topic of grammarTopics) {
-    grammarTopicsByCompositeKey.set(compositeKey(languageCode, topic.id), topic);
-    registerWithCollisionGuard(grammarTopicsById, topic.id, topic, 'grammar topic', languageCode);
-  }
+    const existingLevels = courseLevelsByLanguage.get(languageCode) ?? [];
+    courseLevelsByLanguage.set(languageCode, [...existingLevels, level]);
 
-  const conversationScenarios = pack.conversationScenarios ?? [];
-  conversationScenariosByLanguage.set(languageCode, conversationScenarios);
-  for (const scenario of conversationScenarios) {
-    conversationScenariosByCompositeKey.set(compositeKey(languageCode, scenario.id), scenario);
-    registerWithCollisionGuard(conversationScenariosById, scenario.id, scenario, 'conversation scenario', languageCode);
-  }
+    const currentDefault = defaultCourseByLanguage.get(languageCode);
+    if (!currentDefault || LEVEL_ORDER.indexOf(level) < LEVEL_ORDER.indexOf(currentDefault.level)) {
+      defaultCourseByLanguage.set(languageCode, pack.course);
+    }
 
-  if (pack.placementTest) {
-    placementTestByLanguage.set(languageCode, pack.placementTest);
+    for (const unit of pack.units) {
+      unitsByCompositeKey.set(compositeKey(languageCode, unit.id), unit);
+      registerWithCollisionGuard(unitsById, unit.id, unit, 'unit', languageCode);
+    }
+    for (const lesson of pack.lessons) {
+      lessonsByCompositeKey.set(compositeKey(languageCode, lesson.id), lesson);
+      registerWithCollisionGuard(lessonsById, lesson.id, lesson, 'lesson', languageCode);
+    }
+
+    const grammarTopics = pack.grammarTopics ?? [];
+    grammarTopicsByLanguageLevel.set(levelKey(languageCode, level), grammarTopics);
+    for (const topic of grammarTopics) {
+      grammarTopicsByCompositeKey.set(compositeKey(languageCode, topic.id), topic);
+      registerWithCollisionGuard(grammarTopicsById, topic.id, topic, 'grammar topic', languageCode);
+    }
+
+    const conversationScenarios = pack.conversationScenarios ?? [];
+    conversationScenariosByLanguageLevel.set(levelKey(languageCode, level), conversationScenarios);
+    for (const scenario of conversationScenarios) {
+      conversationScenariosByCompositeKey.set(compositeKey(languageCode, scenario.id), scenario);
+      registerWithCollisionGuard(conversationScenariosById, scenario.id, scenario, 'conversation scenario', languageCode);
+    }
+
+    if (pack.placementTest) {
+      placementTestByLanguageLevel.set(levelKey(languageCode, level), pack.placementTest);
+    }
+
+    const writingItems = pack.writingItems ?? [];
+    const existingWritingForLanguage = writingItemsByLanguage.get(languageCode) ?? [];
+    writingItemsByLanguage.set(languageCode, [...existingWritingForLanguage, ...writingItems]);
+    for (const item of writingItems) {
+      writingItemsByCompositeKey.set(compositeKey(languageCode, item.id), item);
+      registerWithCollisionGuard(writingItemsById, item.id, item, 'writing item', languageCode);
+
+      const existingForLesson = writingItemsByLessonId.get(item.lessonId) ?? [];
+      writingItemsByLessonId.set(item.lessonId, [...existingForLesson, item]);
+    }
   }
 }
 
@@ -117,9 +162,23 @@ if (__DEV__) {
   }
 }
 
-export function getCourseForLanguage(code: LanguageCode | null | undefined): Course | undefined {
+/** Pass level to get a specific course level; defaults to A1 for backward compatibility with pre-Phase-9 callers. */
+export function getCourseForLanguage(code: LanguageCode | null | undefined, level: CEFRLevel = 'A1'): Course | undefined {
   if (!code) return undefined;
-  return courseByLanguage.get(code);
+  return coursesByLanguageLevel.get(levelKey(code, level));
+}
+
+/** The lowest-level course registered for a language — used only where no specific level is known (kept for backward compatibility; prefer getCourseForLanguage(code, level)). */
+export function getDefaultCourseForLanguage(code: LanguageCode | null | undefined): Course | undefined {
+  if (!code) return undefined;
+  return defaultCourseByLanguage.get(code);
+}
+
+/** Which CEFR levels have registered content for a language, in ascending order (e.g. ['A1', 'A2']). */
+export function getCourseLevelsForLanguage(code: LanguageCode | null | undefined): CEFRLevel[] {
+  if (!code) return [];
+  const levels = courseLevelsByLanguage.get(code) ?? [];
+  return LEVEL_ORDER.filter((level) => levels.includes(level));
 }
 
 export function getCourseById(id: string): Course | undefined {
@@ -175,9 +234,10 @@ export function getCourseForLesson(lesson: Lesson): Course | undefined {
   return coursesById.get(unit.courseId);
 }
 
-export function getGrammarTopicsForLanguage(code: LanguageCode | null | undefined): GrammarTopic[] {
+/** Pass level to get a specific course level's grammar topics; defaults to A1 for backward compatibility. */
+export function getGrammarTopicsForLanguage(code: LanguageCode | null | undefined, level: CEFRLevel = 'A1'): GrammarTopic[] {
   if (!code) return [];
-  return grammarTopicsByLanguage.get(code) ?? [];
+  return grammarTopicsByLanguageLevel.get(levelKey(code, level)) ?? [];
 }
 
 /** Pass languageCode when known for collision-safe lookup. */
@@ -186,9 +246,13 @@ export function getGrammarTopicById(id: string, languageCode?: LanguageCode): Gr
   return grammarTopicsById.get(id);
 }
 
-export function getConversationScenariosForLanguage(code: LanguageCode | null | undefined): ConversationScenario[] {
+/** Pass level to get a specific course level's conversation scenarios; defaults to A1 for backward compatibility. */
+export function getConversationScenariosForLanguage(
+  code: LanguageCode | null | undefined,
+  level: CEFRLevel = 'A1',
+): ConversationScenario[] {
   if (!code) return [];
-  return conversationScenariosByLanguage.get(code) ?? [];
+  return conversationScenariosByLanguageLevel.get(levelKey(code, level)) ?? [];
 }
 
 /** Pass languageCode when known for collision-safe lookup. */
@@ -197,7 +261,25 @@ export function getConversationScenarioById(id: string, languageCode?: LanguageC
   return conversationScenariosById.get(id);
 }
 
-export function getPlacementTestForLanguage(code: LanguageCode | null | undefined): PlacementTest | undefined {
+/** Pass level to get a specific course level's placement test; defaults to A1 for backward compatibility. */
+export function getPlacementTestForLanguage(code: LanguageCode | null | undefined, level: CEFRLevel = 'A1'): PlacementTest | undefined {
   if (!code) return undefined;
-  return placementTestByLanguage.get(code);
+  return placementTestByLanguageLevel.get(levelKey(code, level));
+}
+
+/** All writing items for a language, across every registered level (used by the Practice tab's Writing section). */
+export function getWritingItemsForLanguage(code: LanguageCode | null | undefined): WritingItem[] {
+  if (!code) return [];
+  return writingItemsByLanguage.get(code) ?? [];
+}
+
+/** Writing items introduced by one specific lesson (used by the Lesson screen's "Tập viết" section). */
+export function getWritingItemsForLesson(lessonId: string): WritingItem[] {
+  return writingItemsByLessonId.get(lessonId) ?? [];
+}
+
+/** Pass languageCode when known for collision-safe lookup. */
+export function getWritingItemById(id: string, languageCode?: LanguageCode): WritingItem | undefined {
+  if (languageCode) return writingItemsByCompositeKey.get(compositeKey(languageCode, id));
+  return writingItemsById.get(id);
 }

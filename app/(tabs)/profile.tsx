@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Card, LanguageMonogram, ProgressBar, ScreenContainer } from '@/src/components/ui';
+import type { CEFRLevel } from '@/src/content/types';
 import { LANGUAGES, getLanguageByCode } from '@/src/data/languages';
 import { LanguageCard } from '@/src/features/languageHub/components/LanguageCard';
 import { getLanguageHubEntry } from '@/src/features/languageHub/languageSummary';
@@ -27,6 +28,7 @@ export default function ProfileScreen() {
   const languageProfile = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const appLanguages = useAppStore((state) => state.languages);
   const setActiveLanguage = useAppStore((state) => state.setActiveLanguage);
+  const setActiveLevel = useAppStore((state) => state.setActiveLevel);
 
   const {
     completedLessonIds,
@@ -48,14 +50,14 @@ export default function ProfileScreen() {
     getLanguageHubEntry(
       option.code,
       appLanguages[option.code]?.currentLevel ?? null,
+      appLanguages[option.code]?.activeLevel ?? 'A1',
       progressLanguages[option.code]?.completedLessonIds ?? {},
       progressLanguages[option.code]?.lastStudiedAt ?? null,
     ),
   );
 
-  const handleLanguageCardPress = (code: (typeof LANGUAGES)[number]['code']) => {
-    setActiveLanguage(code);
-    const course = getCourseForLanguage(code);
+  const goToNextLessonFor = (code: (typeof LANGUAGES)[number]['code'], level: CEFRLevel) => {
+    const course = getCourseForLanguage(code, level);
     const completedForCode = progressLanguages[code]?.completedLessonIds ?? {};
     const nextLesson = course ? getNextLessonForCourse(course, completedForCode) : undefined;
     if (nextLesson) {
@@ -63,6 +65,17 @@ export default function ProfileScreen() {
     } else {
       router.push('/home');
     }
+  };
+
+  const handleLanguageCardPress = (code: (typeof LANGUAGES)[number]['code']) => {
+    setActiveLanguage(code);
+    goToNextLessonFor(code, appLanguages[code]?.activeLevel ?? 'A1');
+  };
+
+  const handleSelectLevel = (code: (typeof LANGUAGES)[number]['code'], level: CEFRLevel) => {
+    setActiveLanguage(code);
+    setActiveLevel(level, code);
+    goToNextLessonFor(code, level);
   };
 
   const summary = getProgressSummary(
@@ -97,6 +110,7 @@ export default function ProfileScreen() {
             entry={entry}
             isActive={entry.code === activeLanguageCode}
             onPress={() => handleLanguageCardPress(entry.code)}
+            onSelectLevel={(level) => handleSelectLevel(entry.code, level)}
           />
         ))}
       </View>

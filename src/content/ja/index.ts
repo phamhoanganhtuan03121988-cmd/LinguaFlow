@@ -7,6 +7,7 @@ import { japaneseFamilyLessons } from './lessons/family';
 import { japaneseA1GrammarTopics } from './grammar';
 import { japaneseA1ConversationScenarios } from './conversations';
 import { japaneseA1PlacementTest } from './placementTest';
+import { japaneseA1WritingItems } from './writing';
 
 export const japaneseA1Pack: ContentPack = {
   course: japaneseA1Course,
@@ -15,4 +16,5 @@ export const japaneseA1Pack: ContentPack = {
   grammarTopics: japaneseA1GrammarTopics,
   conversationScenarios: japaneseA1ConversationScenarios,
   placementTest: japaneseA1PlacementTest,
+  writingItems: japaneseA1WritingItems,
 };

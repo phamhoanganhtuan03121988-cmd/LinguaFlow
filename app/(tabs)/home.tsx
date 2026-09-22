@@ -27,7 +27,7 @@ export default function HomeScreen() {
   const language = getLanguageByCode(activeLanguageCode);
   const levelMeta = CURRENT_LEVELS.find((level) => level.id === languageProfile.currentLevel);
 
-  const course = getCourseForLanguage(activeLanguageCode);
+  const course = getCourseForLanguage(activeLanguageCode, languageProfile.activeLevel);
   const nextLesson = course ? getNextLessonForCourse(course, completedLessonIds) : undefined;
   const hasStartedLearning = Object.keys(completedLessonIds).length > 0;
   const placementTest = getPlacementTestForLanguage(activeLanguageCode);

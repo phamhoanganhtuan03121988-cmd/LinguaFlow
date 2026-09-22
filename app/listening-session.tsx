@@ -10,20 +10,21 @@ import { ListeningQuestion } from '@/src/features/listening/components/Listening
 import { buildListeningItems } from '@/src/features/listening/listeningPool';
 import type { ListeningItem } from '@/src/features/listening/types';
 import { stop } from '@/src/features/pronunciation/pronunciationService';
-import { useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
 import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
 export default function ListeningSessionScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  // Captured once at session build time so completeListeningSession() below stays
-  // targeted at the language this session was actually built for.
+  // Captured once at session build time so completeListeningSession() below
+  // stays targeted at the language (and course level) this session was built for.
   const [sessionLanguageCode] = useState(() => useAppStore.getState().activeLanguageCode);
+  const [sessionLevel] = useState(() => selectLanguageProfile(useAppStore.getState(), sessionLanguageCode).activeLevel);
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, sessionLanguageCode));
 
   const [items] = useState<ListeningItem[]>(() => {
-    const course = getCourseForLanguage(sessionLanguageCode);
+    const course = getCourseForLanguage(sessionLanguageCode, sessionLevel);
     if (!course) return [];
     return buildListeningItems(course, completedLessonIds);
   });

@@ -7,6 +7,7 @@ import { koreanFamilyLessons } from './lessons/family';
 import { koreanA1GrammarTopics } from './grammar';
 import { koreanA1ConversationScenarios } from './conversations';
 import { koreanA1PlacementTest } from './placementTest';
+import { koreanA1WritingItems } from './writing';
 
 export const koreanA1Pack: ContentPack = {
   course: koreanA1Course,
@@ -15,4 +16,5 @@ export const koreanA1Pack: ContentPack = {
   grammarTopics: koreanA1GrammarTopics,
   conversationScenarios: koreanA1ConversationScenarios,
   placementTest: koreanA1PlacementTest,
+  writingItems: koreanA1WritingItems,
 };

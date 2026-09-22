@@ -303,11 +303,41 @@
     "sectionTitle": "Your languages",
     "notStartedLabel": "Not started",
     "inProgressLabel": "Unit {{unitIndex}} · {{level}}",
-    "completedLabel": "A1 course completed",
+    "completedLabel": "{{level}} course completed",
     "startCta": "Start learning",
     "continueCta": "Continue learning",
     "reviewCta": "Review again",
     "comingSoonLabel": "Content in development",
-    "lastStudiedLabel": "Last studied: {{date}}"
+    "lastStudiedLabel": "Last studied: {{date}}",
+    "levelAvailableLabel": "{{level}} available",
+    "startLevelCta": "Start {{level}}"
+  },
+  "level": {
+    "sectionTitle": "Course level",
+    "switchTo": "Switch to {{level}}"
+  },
+  "writing": {
+    "sectionHeading": "Writing",
+    "sectionSubtitle": "Trace or free-write with your finger or mouse.",
+    "startCta": "Start writing practice",
+    "itemsAvailableLabel": "{{count}} characters available",
+    "noContentBody": "No writing content for this language yet.",
+    "lessonSectionHeading": "✍️ Writing Practice",
+    "practiceCta": "Practice writing",
+    "practiceAgainCta": "Practice again",
+    "title": "Writing Practice",
+    "traceMode": "Trace",
+    "freeMode": "Free write",
+    "clearCta": "Clear",
+    "tryAgainCta": "Try again",
+    "completeCta": "Done",
+    "nextCta": "Next",
+    "doneLabel": "You finished this writing round",
+    "alreadyPracticedNote": "You've practiced this character before.",
+    "noItemsTitle": "No characters to practice yet",
+    "noItemsBody": "Complete more lessons to unlock writing characters.",
+    "backCta": "Back",
+    "sessionCompleteTitle": "Writing session complete!",
+    "sessionCompleteBody": "You practiced {{count}} characters."
   }
 }

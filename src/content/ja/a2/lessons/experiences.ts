@@ -1,0 +1,97 @@
+import type { Lesson } from '../../../types';
+
+export const japaneseA2ExperiencesLessons: Lesson[] = [
+  {
+    id: 'ja-a2-l3-1-past-experiences',
+    unitId: 'ja-a2-u3-experiences',
+    title: '過去の経験',
+    titleVi: 'Trải nghiệm trong quá khứ',
+    objectiveVi: "Kể lại trải nghiệm đã qua và nối câu bằng 'から/ので' (vì nên).",
+    estimatedMinutes: 7,
+    grammarNoteVi: "から và ので đều nghĩa là 'vì...nên...'. から mang tính chủ quan/thân mật hơn, ので lịch sự/khách quan hơn.",
+    vocabulary: [
+      { id: 'ja-a2-l3-1-v1', term: '去年', translationVi: 'Năm ngoái', partOfSpeech: 'phrase', exampleSentenceId: 'ja-a2-l3-1-s1', usageNoteVi: 'Cách đọc (romaji): kyonen' },
+      { id: 'ja-a2-l3-1-v2', term: '旅行しました', translationVi: 'Đã đi du lịch', partOfSpeech: 'verb', exampleSentenceId: 'ja-a2-l3-1-s2', usageNoteVi: 'Cách đọc (romaji): ryokou shimashita' },
+      { id: 'ja-a2-l3-1-v3', term: '忘れられません', translationVi: 'Không thể quên', partOfSpeech: 'phrase', usageNoteVi: 'Cách đọc (romaji): wasurararemasen' },
+      { id: 'ja-a2-l3-1-v4', term: '前に', translationVi: 'Trước đây', partOfSpeech: 'phrase', exampleSentenceId: 'ja-a2-l3-1-s3', usageNoteVi: 'Cách đọc (romaji): mae ni' },
+      { id: 'ja-a2-l3-1-v5', term: '経験', translationVi: 'Trải nghiệm', partOfSpeech: 'noun', usageNoteVi: 'Cách đọc (romaji): keiken' },
+    ],
+    sentences: [
+      { id: 'ja-a2-l3-1-s1', text: '去年、日本を旅行しました。', translationVi: '(Kyonen, Nihon o ryokou shimashita.) Năm ngoái tôi đã đi du lịch Nhật Bản.' },
+      { id: 'ja-a2-l3-1-s2', text: '時間がなかったので行けませんでした。', translationVi: '(Jikan ga nakatta node ikemasen deshita.) Vì không có thời gian nên tôi đã không đi được.' },
+      { id: 'ja-a2-l3-1-s3', text: '三年前にその出来事がありました。', translationVi: '(San nen mae ni sono dekigoto ga arimashita.) Chuyện đó đã xảy ra ba năm trước.' },
+    ],
+    exercises: [
+      {
+        id: 'ja-a2-l3-1-ex1',
+        type: 'multiple-choice',
+        promptVi: "Chọn dạng quá khứ đúng của '旅行します'.",
+        question: '去年、日本を___。',
+        options: ['旅行します', '旅行しました', '旅行しています', '旅行するつもりです'],
+        correctOptionIndex: 1,
+      },
+      {
+        id: 'ja-a2-l3-1-ex2',
+        type: 'fill-blank',
+        promptVi: "Điền từ nối nguyên nhân-kết quả còn thiếu.",
+        sentenceTemplate: '時間がなかった___行けませんでした。',
+        wordBank: ['ので', 'けど', 'より'],
+        correctAnswer: 'ので',
+      },
+      {
+        id: 'ja-a2-l3-1-ex3',
+        type: 'multiple-choice',
+        promptVi: "Chọn nghĩa đúng của '忘れられません'.",
+        question: '忘れられません',
+        options: ['Không thể quên', 'Có thể nhớ', 'Muốn quên', 'Đã quên rồi'],
+        correctOptionIndex: 0,
+      },
+    ],
+  },
+  {
+    id: 'ja-a2-l3-2-future-plans',
+    unitId: 'ja-a2-u3-experiences',
+    title: '将来の計画と招待',
+    titleVi: 'Kế hoạch tương lai và lời mời',
+    objectiveVi: "Nói về kế hoạch bằng 'つもりです' và mời ai đó.",
+    estimatedMinutes: 7,
+    grammarNoteVi: "つもりです gắn sau động từ dạng nguyên thể (辞書形) để diễn tả dự định/ý định. Ví dụ: 留学するつもりです (Tôi định đi du học).",
+    vocabulary: [
+      { id: 'ja-a2-l3-2-v1', term: '来月', translationVi: 'Tháng tới', partOfSpeech: 'phrase', exampleSentenceId: 'ja-a2-l3-2-s1', usageNoteVi: 'Cách đọc (romaji): raigetsu' },
+      { id: 'ja-a2-l3-2-v2', term: '一緒に行きませんか', translationVi: 'Bạn có muốn đi cùng không?', partOfSpeech: 'phrase', exampleSentenceId: 'ja-a2-l3-2-s2', usageNoteVi: 'Cách đọc (romaji): issho ni ikimasen ka' },
+      { id: 'ja-a2-l3-2-v3', term: 'いいですね、行きます', translationVi: 'Được đấy, tôi sẽ đi', partOfSpeech: 'phrase', usageNoteVi: 'Cách đọc (romaji): ii desu ne, ikimasu' },
+      { id: 'ja-a2-l3-2-v4', term: 'すみません、行けません', translationVi: 'Xin lỗi, tôi không đi được', partOfSpeech: 'phrase', exampleSentenceId: 'ja-a2-l3-2-s3', usageNoteVi: 'Cách đọc (romaji): sumimasen, ikemasen' },
+      { id: 'ja-a2-l3-2-v5', term: '計画', translationVi: 'Kế hoạch', partOfSpeech: 'noun', usageNoteVi: 'Cách đọc (romaji): keikaku' },
+    ],
+    sentences: [
+      { id: 'ja-a2-l3-2-s1', text: '来月、留学するつもりです。', translationVi: '(Raigetsu, ryuugaku suru tsumori desu.) Tháng tới tôi định đi du học.' },
+      { id: 'ja-a2-l3-2-s2', text: '晩ご飯を一緒に行きませんか。', translationVi: '(Bangohan o issho ni ikimasen ka.) Bạn có muốn đi ăn tối cùng không?' },
+      { id: 'ja-a2-l3-2-s3', text: 'すみません、行けません。', translationVi: '(Sumimasen, ikemasen.) Xin lỗi, tôi không đi được.' },
+    ],
+    exercises: [
+      {
+        id: 'ja-a2-l3-2-ex1',
+        type: 'multiple-choice',
+        promptVi: "Chọn dạng ý định đúng.",
+        question: '来月、留学する___。',
+        options: ['です', 'つもりです', 'ました', 'ています'],
+        correctOptionIndex: 1,
+      },
+      {
+        id: 'ja-a2-l3-2-ex2',
+        type: 'fill-blank',
+        promptVi: 'Điền từ còn thiếu để mời ai đó.',
+        sentenceTemplate: '一緒に___か。',
+        wordBank: ['行きません', '行きました', '行って'],
+        correctAnswer: '行きません',
+      },
+      {
+        id: 'ja-a2-l3-2-ex3',
+        type: 'word-order',
+        promptVi: 'Sắp xếp thành câu đúng: "Tháng tới tôi định đi du học."',
+        words: ['つもりです', '来月', '留学する'],
+        correctOrder: ['来月', '留学する', 'つもりです'],
+      },
+    ],
+  },
+];

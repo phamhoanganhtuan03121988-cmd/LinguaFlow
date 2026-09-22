@@ -7,6 +7,7 @@ import { chineseFamilyLessons } from './lessons/family';
 import { chineseA1GrammarTopics } from './grammar';
 import { chineseA1ConversationScenarios } from './conversations';
 import { chineseA1PlacementTest } from './placementTest';
+import { chineseA1WritingItems } from './writing';
 
 export const chineseA1Pack: ContentPack = {
   course: chineseA1Course,
@@ -15,4 +16,5 @@ export const chineseA1Pack: ContentPack = {
   grammarTopics: chineseA1GrammarTopics,
   conversationScenarios: chineseA1ConversationScenarios,
   placementTest: chineseA1PlacementTest,
+  writingItems: chineseA1WritingItems,
 };

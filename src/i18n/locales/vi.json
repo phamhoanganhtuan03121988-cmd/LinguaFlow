@@ -303,11 +303,41 @@
     "sectionTitle": "Ngôn ngữ của bạn",
     "notStartedLabel": "Chưa bắt đầu",
     "inProgressLabel": "Đơn vị {{unitIndex}} · {{level}}",
-    "completedLabel": "Đã hoàn thành khoá A1",
+    "completedLabel": "Đã hoàn thành khoá {{level}}",
     "startCta": "Bắt đầu học",
     "continueCta": "Học tiếp",
     "reviewCta": "Ôn tập lại",
     "comingSoonLabel": "Nội dung đang được xây dựng",
-    "lastStudiedLabel": "Học gần nhất: {{date}}"
+    "lastStudiedLabel": "Học gần nhất: {{date}}",
+    "levelAvailableLabel": "{{level}} đã sẵn sàng",
+    "startLevelCta": "Bắt đầu {{level}}"
+  },
+  "level": {
+    "sectionTitle": "Trình độ khoá học",
+    "switchTo": "Chuyển sang {{level}}"
+  },
+  "writing": {
+    "sectionHeading": "Tập viết",
+    "sectionSubtitle": "Luyện viết theo mẫu hoặc tự do, dùng ngón tay hoặc chuột.",
+    "startCta": "Bắt đầu tập viết",
+    "itemsAvailableLabel": "{{count}} ký tự có thể luyện",
+    "noContentBody": "Chưa có nội dung tập viết cho ngôn ngữ này.",
+    "lessonSectionHeading": "✍️ Tập viết",
+    "practiceCta": "Tập viết",
+    "practiceAgainCta": "Luyện lại",
+    "title": "Tập viết",
+    "traceMode": "Đồ theo mẫu",
+    "freeMode": "Viết tự do",
+    "clearCta": "Xóa",
+    "tryAgainCta": "Viết lại",
+    "completeCta": "Hoàn thành",
+    "nextCta": "Tiếp theo",
+    "doneLabel": "Bạn đã hoàn thành lượt viết",
+    "alreadyPracticedNote": "Bạn đã luyện ký tự này trước đó.",
+    "noItemsTitle": "Chưa có ký tự để luyện",
+    "noItemsBody": "Hoàn thành thêm bài học để mở khoá các ký tự luyện viết.",
+    "backCta": "Quay lại",
+    "sessionCompleteTitle": "Hoàn thành buổi tập viết!",
+    "sessionCompleteBody": "Bạn đã luyện {{count}} ký tự."
   }
 }

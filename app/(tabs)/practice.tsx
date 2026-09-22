@@ -4,12 +4,17 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Card, EmptyState, ScreenContainer } from '@/src/components/ui';
-import { getConversationScenariosForLanguage, getCourseForLanguage, getGrammarTopicsForLanguage } from '@/src/content/loader';
+import {
+  getConversationScenariosForLanguage,
+  getCourseForLanguage,
+  getGrammarTopicsForLanguage,
+  getWritingItemsForLanguage,
+} from '@/src/content/loader';
 import { getLanguageByCode } from '@/src/data/languages';
 import { getCourseProgress } from '@/src/features/learn/courseProgress';
 import { GrammarTopicCard } from '@/src/features/grammar/components/GrammarTopicCard';
 import { ScenarioCard } from '@/src/features/conversation/components/ScenarioCard';
-import { useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
 import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { colors, radius, spacing, typography } from '@/src/theme';
 
@@ -24,6 +29,7 @@ export default function PracticeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const { activeLevel } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const {
     completedLessonIds,
     practicedSpeakingIds,
@@ -44,7 +50,7 @@ export default function PracticeScreen() {
     );
   }
 
-  const course = getCourseForLanguage(activeLanguageCode);
+  const course = getCourseForLanguage(activeLanguageCode, activeLevel);
 
   if (!course) {
     const language = getLanguageByCode(activeLanguageCode);
@@ -73,8 +79,11 @@ export default function PracticeScreen() {
     );
   }
 
-  const grammarTopics = getGrammarTopicsForLanguage(activeLanguageCode);
-  const conversationScenarios = getConversationScenariosForLanguage(activeLanguageCode);
+  const grammarTopics = getGrammarTopicsForLanguage(activeLanguageCode, activeLevel);
+  const conversationScenarios = getConversationScenariosForLanguage(activeLanguageCode, activeLevel);
+  const writingItems = getWritingItemsForLanguage(activeLanguageCode).filter(
+    (item) => completedLessonIds[item.lessonId],
+  );
 
   return (
     <ScreenContainer maxWidth={520}>
@@ -92,6 +101,30 @@ export default function PracticeScreen() {
           </View>
         </Card>
       </View>
+
+      {getWritingItemsForLanguage(activeLanguageCode).length > 0 ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionHeading}>{t('writing.sectionHeading')}</Text>
+          <Text style={styles.sectionSubtitle}>{t('writing.sectionSubtitle')}</Text>
+          <Card style={styles.startCard}>
+            <View style={styles.iconBadge}>
+              <Ionicons name="create-outline" size={28} color={colors.primary} />
+            </View>
+            {writingItems.length > 0 ? (
+              <>
+                <Text style={styles.writingCountLabel}>
+                  {t('writing.itemsAvailableLabel', { count: writingItems.length })}
+                </Text>
+                <View style={styles.startCta}>
+                  <Button label={t('writing.startCta')} onPress={() => router.push('/writing-session')} />
+                </View>
+              </>
+            ) : (
+              <Text style={styles.writingCountLabel}>{t('writing.noItemsBody')}</Text>
+            )}
+          </Card>
+        </View>
+      ) : null}
 
       <View style={styles.section}>
         <Text style={styles.sectionHeading}>{t('grammar.tabHeading')}</Text>
@@ -193,6 +226,12 @@ const styles = StyleSheet.create({
   startCta: {
     marginTop: spacing.md,
     alignSelf: 'stretch',
+  },
+  writingCountLabel: {
+    ...typography.bodySmall,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+    textAlign: 'center',
   },
   stack: {
     gap: spacing.sm,

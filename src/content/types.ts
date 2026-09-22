@@ -164,6 +164,28 @@ export interface PlacementTest {
   questions: PlacementQuestion[];
 }
 
+/** Writing system a character belongs to — determines how Writing Practice labels/groups it, not rendering. */
+export type WritingScript = 'hangul' | 'hanzi' | 'hiragana' | 'katakana' | 'kanji';
+
+/**
+ * A single traceable character/syllable-block introduced by a lesson. Deliberately
+ * has no stroke-path data field: Phase 9 has no verified stroke-order dataset, and
+ * fabricating one would violate "never claim fake stroke order" — the Writing
+ * Practice UI only offers a faint whole-character guide + free write, never a
+ * claimed stroke sequence.
+ */
+export interface WritingItem {
+  id: string;
+  languageCode: LanguageCode;
+  /** The lesson this character was introduced in — Writing Practice entry point in the lesson screen filters by this. */
+  lessonId: string;
+  script: WritingScript;
+  character: string;
+  /** A word from the course that uses this character, for context. */
+  exampleWord?: string;
+  exampleWordTranslationVi?: string;
+}
+
 export interface ContentPack {
   course: Course;
   units: Unit[];
@@ -171,4 +193,6 @@ export interface ContentPack {
   grammarTopics?: GrammarTopic[];
   conversationScenarios?: ConversationScenario[];
   placementTest?: PlacementTest;
+  /** Not populated for English — Latin script has no tracing need (see Part 7 of the Phase 9 spec). */
+  writingItems?: WritingItem[];
 }

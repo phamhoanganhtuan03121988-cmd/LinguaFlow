@@ -7,7 +7,7 @@ import { getCourseForLanguage } from '@/src/content/loader';
 import { getLanguageByCode } from '@/src/data/languages';
 import { getReviewableWordsForCourse, partitionWordsByStatus } from '@/src/features/review/reviewPool';
 import { getReviewStats } from '@/src/features/review/reviewStats';
-import { useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
 import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { selectLanguageReview, useReviewStore } from '@/src/store/useReviewStore';
 import { colors, spacing, typography } from '@/src/theme';
@@ -16,6 +16,7 @@ export default function ReviewScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
+  const { activeLevel } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
   const { wordStates, totalReviewSessionsCompleted } = useReviewStore((state) =>
     selectLanguageReview(state, activeLanguageCode),
@@ -33,7 +34,7 @@ export default function ReviewScreen() {
     );
   }
 
-  const course = getCourseForLanguage(activeLanguageCode);
+  const course = getCourseForLanguage(activeLanguageCode, activeLevel);
 
   if (!course) {
     const language = getLanguageByCode(activeLanguageCode);

@@ -15,7 +15,7 @@ import {
   type ReviewableWord,
 } from '@/src/features/review/reviewPool';
 import type { SrsRating } from '@/src/features/review/srs';
-import { useAppStore } from '@/src/store/useAppStore';
+import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
 import { selectLanguageProgress, useProgressStore } from '@/src/store/useProgressStore';
 import { XP_REWARDS, selectLanguageReview, useReviewStore } from '@/src/store/useReviewStore';
 import { colors, spacing, typography } from '@/src/theme';
@@ -27,16 +27,18 @@ export default function ReviewSessionScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   // Captured once at session build time so the whole session (including every
-  // recordReview/completeSession call below) stays targeted at the language it
-  // was actually built for, even if activeLanguageCode were to change mid-session.
+  // recordReview/completeSession call below) stays targeted at the language
+  // (and course level) it was actually built for, even if activeLanguageCode
+  // were to change mid-session.
   const [sessionLanguageCode] = useState(() => useAppStore.getState().activeLanguageCode);
+  const [sessionLevel] = useState(() => selectLanguageProfile(useAppStore.getState(), sessionLanguageCode).activeLevel);
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, sessionLanguageCode));
   const { wordStates } = useReviewStore((state) => selectLanguageReview(state, sessionLanguageCode));
   const recordReview = useReviewStore((state) => state.recordReview);
   const completeSession = useReviewStore((state) => state.completeSession);
 
   const [initialSession] = useState<ReviewableWord[]>(() => {
-    const course = getCourseForLanguage(sessionLanguageCode);
+    const course = getCourseForLanguage(sessionLanguageCode, sessionLevel);
     if (!course) return [];
     const words = getReviewableWordsForCourse(course, completedLessonIds);
     const { due, newWords } = partitionWordsByStatus(words, wordStates);
