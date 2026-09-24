@@ -84,6 +84,35 @@ export interface WordOrderExercise extends BaseExercise {
 
 export type Exercise = MultipleChoiceExercise | FillBlankExercise | WordOrderExercise;
 
+/**
+ * Track-specific skill category an exam-track Lesson/GrammarTopic primarily
+ * targets (Phase 10 Milestone 3 — exam skill metadata is architecture/
+ * classification only, not a claim that the app runs skill-based exam
+ * simulations or scores any skill). Left undefined for 'general' track
+ * content, where it has no meaning. Per-track usage:
+ *  - TOEIC: 'listening' | 'reading' | 'vocabulary' | 'grammar'
+ *  - IELTS: 'listening' | 'reading' | 'writing' | 'speaking' | 'vocabulary' | 'grammar'
+ *  - TOPIK / HSK: 'vocabulary' | 'grammar' | 'reading' | 'listening' | 'writing' — an
+ *    informal practice-skill classification reused from PlacementSkill, NOT a
+ *    claim that it mirrors either exam's official section names (TOPIK's are
+ *    듣기/쓰기/읽기 — Listening/Writing/Reading; HSK's are 听力/阅读/书写 —
+ *    Listening/Reading/Writing; neither has a separate vocabulary or grammar
+ *    section). 'writing' is valid here for content framed around that section
+ *    (e.g. an advanced HSK writing/composition sample).
+ *  - JLPT: 'language-knowledge' | 'reading' | 'listening' ONLY — deliberately
+ *    mirrors the official 言語知識 / 読解 / 聴解 split, where 言語知識 already
+ *    covers vocabulary, kanji and grammar together. Never tag JLPT content
+ *    'vocabulary' or 'grammar' — classify it as 'language-knowledge' instead.
+ */
+export type ExamSkillId =
+  | 'listening'
+  | 'reading'
+  | 'writing'
+  | 'speaking'
+  | 'vocabulary'
+  | 'grammar'
+  | 'language-knowledge';
+
 export interface Lesson {
   id: string;
   unitId: string;
@@ -98,6 +127,8 @@ export interface Lesson {
   grammarNoteVi?: string;
   /** Reserved for future dialogue-based lessons. Not populated or rendered yet. */
   dialogue?: DialogueLine[];
+  /** Exam-track skill classification — see ExamSkillId. Unset for 'general' track lessons. */
+  examSkill?: ExamSkillId;
 }
 
 export interface Unit {
@@ -154,6 +185,8 @@ export interface GrammarTopic {
   examples: ExampleSentence[];
   commonMistakesVi?: string;
   exercises: Exercise[];
+  /** Exam-track skill classification — see ExamSkillId. Unset for 'general' track topics. */
+  examSkill?: ExamSkillId;
 }
 
 export interface ConversationTaskOption {
