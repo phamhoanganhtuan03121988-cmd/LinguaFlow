@@ -29,7 +29,7 @@ export default function PracticeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
-  const { activeLevel } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
+  const { activeTrackId, activeLevelId } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const {
     completedLessonIds,
     practicedSpeakingIds,
@@ -50,7 +50,7 @@ export default function PracticeScreen() {
     );
   }
 
-  const course = getCourseForLanguage(activeLanguageCode, activeLevel);
+  const course = getCourseForLanguage(activeLanguageCode, activeTrackId, activeLevelId);
 
   if (!course) {
     const language = getLanguageByCode(activeLanguageCode);
@@ -79,8 +79,8 @@ export default function PracticeScreen() {
     );
   }
 
-  const grammarTopics = getGrammarTopicsForLanguage(activeLanguageCode, activeLevel);
-  const conversationScenarios = getConversationScenariosForLanguage(activeLanguageCode, activeLevel);
+  const grammarTopics = getGrammarTopicsForLanguage(activeLanguageCode, activeTrackId, activeLevelId);
+  const conversationScenarios = getConversationScenariosForLanguage(activeLanguageCode, activeTrackId, activeLevelId);
   const writingItems = getWritingItemsForLanguage(activeLanguageCode).filter(
     (item) => completedLessonIds[item.lessonId],
   );

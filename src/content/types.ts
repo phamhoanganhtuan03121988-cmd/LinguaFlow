@@ -2,6 +2,25 @@ import type { LanguageCode } from '@/src/data/languages';
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
+/**
+ * Every level/target id any track in src/content/tracks.ts can register content
+ * under — 'general' (CEFR), TOEIC target scores, IELTS target bands, TOPIK/HSK
+ * numeric levels, JLPT N-levels, plus the shared 'foundation' entry point. A
+ * flat union rather than a per-track generic: which ids are actually valid for
+ * a given track is enforced at the registry level (LearningTrack.levels in
+ * tracks.ts, checked by the loader), not by the type system per-track — that
+ * would need real generics for little benefit here. This just replaces the
+ * unrestricted `string` Course/GrammarTopic/ConversationScenario.level had
+ * through Phase 10's first pass with a closed, reusable set of legal values.
+ */
+export type TrackLevelId =
+  | CEFRLevel
+  | 'foundation'
+  | '450' | '550' | '650' | '750' | '850' | '900'
+  | '4.0' | '4.5' | '5.0' | '5.5' | '6.0' | '6.5' | '7.0' | '7.5' | '8.0' | '8.5' | '9.0'
+  | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+  | 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
+
 export interface VocabularyItem {
   id: string;
   term: string;
@@ -93,16 +112,39 @@ export interface Unit {
 export interface Course {
   id: string;
   languageCode: LanguageCode;
-  level: CEFRLevel;
+  /**
+   * Which learning track this course belongs to (Phase 10) — 'general', 'toeic',
+   * 'ielts', 'topik', 'hsk', 'jlpt', etc. (see src/content/tracks.ts). Optional
+   * and defaults to 'general' at registration time in loader.ts, so every
+   * pre-Phase-10 Course (which never set this field) keeps working unchanged.
+   */
+  trackId?: string;
+  /**
+   * Level identifier WITHIN that track. Was CEFRLevel-only through Phase 9;
+   * widened to TrackLevelId in Phase 10 because exam tracks use non-CEFR
+   * level ids (TOEIC "550", IELTS "6.0", TOPIK "3", HSK "4", JLPT "N3") — see
+   * Part 2 of the Phase 10 spec. CEFRLevel string values ('A1'..'C2') remain
+   * valid here unchanged for the 'general' track.
+   */
+  level: TrackLevelId;
   titleVi: string;
   descriptionVi: string;
   unitIds: string[];
+  /**
+   * True only for the small proof-of-architecture exam-track sample courses
+   * added in Phase 10 (Part 11) — never a complete exam curriculum. The UI
+   * must label these honestly ("Mẫu — đang phát triển"), never imply full
+   * exam coverage or guarantee a score.
+   */
+  isSample?: boolean;
 }
 
 export interface GrammarTopic {
   id: string;
   languageCode: LanguageCode;
-  level: CEFRLevel;
+  /** Defaults to 'general' at registration if unset — see Course.trackId. */
+  trackId?: string;
+  level: TrackLevelId;
   title: string;
   titleVi: string;
   explanationVi: string;
@@ -136,7 +178,9 @@ export interface ConversationTask {
 export interface ConversationScenario {
   id: string;
   languageCode: LanguageCode;
-  level: CEFRLevel;
+  /** Defaults to 'general' at registration if unset — see Course.trackId. */
+  trackId?: string;
+  level: TrackLevelId;
   title: string;
   titleVi: string;
   descriptionVi: string;
@@ -159,6 +203,13 @@ export interface PlacementQuestion {
 export interface PlacementTest {
   id: string;
   languageCode: LanguageCode;
+  /**
+   * Defaults to 'general' at registration if unset. Reserved for future
+   * exam-specific diagnostics (TOEIC/IELTS/TOPIK/HSK/JLPT) — Phase 10 only
+   * adds this field to the type, it does not build any exam diagnostic test
+   * (see Part 15 of the Phase 10 spec: architecture/interface only).
+   */
+  trackId?: string;
   titleVi: string;
   descriptionVi: string;
   questions: PlacementQuestion[];

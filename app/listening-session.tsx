@@ -20,11 +20,16 @@ export default function ListeningSessionScreen() {
   // Captured once at session build time so completeListeningSession() below
   // stays targeted at the language (and course level) this session was built for.
   const [sessionLanguageCode] = useState(() => useAppStore.getState().activeLanguageCode);
-  const [sessionLevel] = useState(() => selectLanguageProfile(useAppStore.getState(), sessionLanguageCode).activeLevel);
+  const [sessionTrackId] = useState(
+    () => selectLanguageProfile(useAppStore.getState(), sessionLanguageCode).activeTrackId,
+  );
+  const [sessionLevelId] = useState(
+    () => selectLanguageProfile(useAppStore.getState(), sessionLanguageCode).activeLevelId,
+  );
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, sessionLanguageCode));
 
   const [items] = useState<ListeningItem[]>(() => {
-    const course = getCourseForLanguage(sessionLanguageCode, sessionLevel);
+    const course = getCourseForLanguage(sessionLanguageCode, sessionTrackId, sessionLevelId);
     if (!course) return [];
     return buildListeningItems(course, completedLessonIds);
   });

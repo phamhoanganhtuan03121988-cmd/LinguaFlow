@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { EmptyState, ScreenContainer } from '@/src/components/ui';
-import { getCourseForLanguage, getCourseLevelsForLanguage, getUnitsForCourse } from '@/src/content/loader';
-import type { CEFRLevel } from '@/src/content/types';
+import { getAvailableLevelsForTrack, getCourseForLanguage, getUnitsForCourse } from '@/src/content/loader';
+import { formatLevelLabel, getTrack } from '@/src/content/tracks';
 import { getLanguageByCode } from '@/src/data/languages';
 import { getNextLessonForCourse, getUnitProgress, getUnitStatus } from '@/src/features/learn/courseProgress';
 import { UnitCard } from '@/src/features/learn/components/UnitCard';
@@ -16,8 +16,8 @@ export default function LearnScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
-  const { activeLevel } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
-  const setActiveLevel = useAppStore((state) => state.setActiveLevel);
+  const { activeTrackId, activeLevelId } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
+  const setActiveTrackLevel = useAppStore((state) => state.setActiveTrackLevel);
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
 
   if (!activeLanguageCode) {
@@ -32,8 +32,9 @@ export default function LearnScreen() {
     );
   }
 
-  const availableLevels = getCourseLevelsForLanguage(activeLanguageCode);
-  const course = getCourseForLanguage(activeLanguageCode, activeLevel);
+  const track = getTrack(activeLanguageCode, activeTrackId);
+  const availableLevels = track ? getAvailableLevelsForTrack(activeLanguageCode, activeTrackId, track.levels) : [];
+  const course = getCourseForLanguage(activeLanguageCode, activeTrackId, activeLevelId);
 
   if (!course) {
     const language = getLanguageByCode(activeLanguageCode);
@@ -58,16 +59,18 @@ export default function LearnScreen() {
 
       {availableLevels.length > 1 ? (
         <View style={styles.levelRow}>
-          <Text style={styles.levelLabel}>{t('level.sectionTitle')}</Text>
+          <Text style={styles.levelLabel}>
+            {t(track?.levelKind === 'target' ? 'level.targetSectionTitle' : 'level.sectionTitle')}
+          </Text>
           <View style={styles.levelPillRow}>
-            {availableLevels.map((level) => (
+            {availableLevels.map((level: string) => (
               <Pressable
                 key={level}
-                onPress={() => setActiveLevel(level, activeLanguageCode)}
-                style={[styles.levelPill, level === activeLevel && styles.levelPillActive]}
+                onPress={() => setActiveTrackLevel(activeTrackId, level, activeLanguageCode)}
+                style={[styles.levelPill, level === activeLevelId && styles.levelPillActive]}
               >
-                <Text style={[styles.levelPillText, level === activeLevel && styles.levelPillTextActive]}>
-                  {level}
+                <Text style={[styles.levelPillText, level === activeLevelId && styles.levelPillTextActive]}>
+                  {track ? formatLevelLabel(track, level) : level}
                 </Text>
               </Pressable>
             ))}

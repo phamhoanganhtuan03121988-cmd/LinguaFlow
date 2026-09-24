@@ -310,10 +310,22 @@
     "comingSoonLabel": "Content in development",
     "lastStudiedLabel": "Last studied: {{date}}",
     "levelAvailableLabel": "{{level}} available",
-    "startLevelCta": "Start {{level}}"
+    "startLevelCta": "Start {{level}}",
+    "goalLabel": "Goal",
+    "sampleBadge": "Sample — in development",
+    "changeGoalCta": "Change goal"
+  },
+  "trackSelector": {
+    "activeTitle": "Choose a track for {{language}}",
+    "goalTitle": "Set a goal for {{language}}",
+    "subtitle": "Choose a learning track, then a level.",
+    "comingSoonTag": "In development",
+    "notFoundTitle": "Language not found",
+    "notFoundBody": "Please go back and choose a language first."
   },
   "level": {
     "sectionTitle": "Course level",
+    "targetSectionTitle": "Target score",
     "switchTo": "Switch to {{level}}"
   },
   "writing": {

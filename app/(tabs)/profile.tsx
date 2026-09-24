@@ -5,12 +5,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Card, LanguageMonogram, ProgressBar, ScreenContainer } from '@/src/components/ui';
-import type { CEFRLevel } from '@/src/content/types';
 import { LANGUAGES, getLanguageByCode } from '@/src/data/languages';
 import { LanguageCard } from '@/src/features/languageHub/components/LanguageCard';
 import { getLanguageHubEntry } from '@/src/features/languageHub/languageSummary';
 import { getNextLessonForCourse } from '@/src/features/learn/courseProgress';
-import { getCourseForLanguage } from '@/src/content/loader';
+import { getAvailableLevelsForTrack, getCourseForLanguage } from '@/src/content/loader';
+import { getTrack } from '@/src/content/tracks';
 import { getProgressSummary } from '@/src/features/progress/progressSummary';
 import { resetAllData } from '@/src/store/resetAllData';
 import { selectLanguageProfile, useAppStore } from '@/src/store/useAppStore';
@@ -28,7 +28,7 @@ export default function ProfileScreen() {
   const languageProfile = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const appLanguages = useAppStore((state) => state.languages);
   const setActiveLanguage = useAppStore((state) => state.setActiveLanguage);
-  const setActiveLevel = useAppStore((state) => state.setActiveLevel);
+  const setActiveTrackLevel = useAppStore((state) => state.setActiveTrackLevel);
 
   const {
     completedLessonIds,
@@ -50,14 +50,16 @@ export default function ProfileScreen() {
     getLanguageHubEntry(
       option.code,
       appLanguages[option.code]?.currentLevel ?? null,
-      appLanguages[option.code]?.activeLevel ?? 'A1',
+      appLanguages[option.code]?.activeTrackId ?? 'general',
+      appLanguages[option.code]?.activeLevelId ?? 'A1',
+      appLanguages[option.code]?.trackGoal ?? null,
       progressLanguages[option.code]?.completedLessonIds ?? {},
       progressLanguages[option.code]?.lastStudiedAt ?? null,
     ),
   );
 
-  const goToNextLessonFor = (code: (typeof LANGUAGES)[number]['code'], level: CEFRLevel) => {
-    const course = getCourseForLanguage(code, level);
+  const goToNextLessonFor = (code: (typeof LANGUAGES)[number]['code'], trackId: string, levelId: string) => {
+    const course = getCourseForLanguage(code, trackId, levelId);
     const completedForCode = progressLanguages[code]?.completedLessonIds ?? {};
     const nextLesson = course ? getNextLessonForCourse(course, completedForCode) : undefined;
     if (nextLesson) {
@@ -69,13 +71,28 @@ export default function ProfileScreen() {
 
   const handleLanguageCardPress = (code: (typeof LANGUAGES)[number]['code']) => {
     setActiveLanguage(code);
-    goToNextLessonFor(code, appLanguages[code]?.activeLevel ?? 'A1');
+    goToNextLessonFor(code, appLanguages[code]?.activeTrackId ?? 'general', appLanguages[code]?.activeLevelId ?? 'A1');
   };
 
-  const handleSelectLevel = (code: (typeof LANGUAGES)[number]['code'], level: CEFRLevel) => {
+  const handleSelectTrack = (code: (typeof LANGUAGES)[number]['code'], trackId: string) => {
+    const track = getTrack(code, trackId);
+    if (!track) return;
+    const available = getAvailableLevelsForTrack(code, trackId, track.levels);
+    const firstLevel = available[0] ?? track.levels[0];
     setActiveLanguage(code);
-    setActiveLevel(level, code);
-    goToNextLessonFor(code, level);
+    setActiveTrackLevel(trackId, firstLevel, code);
+    goToNextLessonFor(code, trackId, firstLevel);
+  };
+
+  const handleSelectLevel = (code: (typeof LANGUAGES)[number]['code'], levelId: string) => {
+    const trackId = appLanguages[code]?.activeTrackId ?? 'general';
+    setActiveLanguage(code);
+    setActiveTrackLevel(trackId, levelId, code);
+    goToNextLessonFor(code, trackId, levelId);
+  };
+
+  const handleChangeGoal = (code: (typeof LANGUAGES)[number]['code']) => {
+    router.push(`/track-level-selector?languageCode=${code}&mode=goal`);
   };
 
   const summary = getProgressSummary(
@@ -110,7 +127,9 @@ export default function ProfileScreen() {
             entry={entry}
             isActive={entry.code === activeLanguageCode}
             onPress={() => handleLanguageCardPress(entry.code)}
-            onSelectLevel={(level) => handleSelectLevel(entry.code, level)}
+            onSelectTrack={(trackId) => handleSelectTrack(entry.code, trackId)}
+            onSelectLevel={(levelId) => handleSelectLevel(entry.code, levelId)}
+            onChangeGoal={() => handleChangeGoal(entry.code)}
           />
         ))}
       </View>

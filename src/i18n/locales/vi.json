@@ -310,10 +310,22 @@
     "comingSoonLabel": "Nội dung đang được xây dựng",
     "lastStudiedLabel": "Học gần nhất: {{date}}",
     "levelAvailableLabel": "{{level}} đã sẵn sàng",
-    "startLevelCta": "Bắt đầu {{level}}"
+    "startLevelCta": "Bắt đầu {{level}}",
+    "goalLabel": "Mục tiêu",
+    "sampleBadge": "Mẫu — đang phát triển",
+    "changeGoalCta": "Đổi mục tiêu"
+  },
+  "trackSelector": {
+    "activeTitle": "Chọn lộ trình cho {{language}}",
+    "goalTitle": "Đặt mục tiêu cho {{language}}",
+    "subtitle": "Chọn lộ trình học, sau đó chọn cấp độ.",
+    "comingSoonTag": "Đang phát triển",
+    "notFoundTitle": "Không tìm thấy ngôn ngữ",
+    "notFoundBody": "Vui lòng quay lại và chọn một ngôn ngữ trước."
   },
   "level": {
     "sectionTitle": "Trình độ khoá học",
+    "targetSectionTitle": "Mục tiêu điểm số",
     "switchTo": "Chuyển sang {{level}}"
   },
   "writing": {

@@ -16,7 +16,7 @@ export default function ReviewScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const activeLanguageCode = useAppStore((state) => state.activeLanguageCode);
-  const { activeLevel } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
+  const { activeTrackId, activeLevelId } = useAppStore((state) => selectLanguageProfile(state, activeLanguageCode));
   const { completedLessonIds } = useProgressStore((state) => selectLanguageProgress(state, activeLanguageCode));
   const { wordStates, totalReviewSessionsCompleted } = useReviewStore((state) =>
     selectLanguageReview(state, activeLanguageCode),
@@ -34,7 +34,7 @@ export default function ReviewScreen() {
     );
   }
 
-  const course = getCourseForLanguage(activeLanguageCode, activeLevel);
+  const course = getCourseForLanguage(activeLanguageCode, activeTrackId, activeLevelId);
 
   if (!course) {
     const language = getLanguageByCode(activeLanguageCode);
